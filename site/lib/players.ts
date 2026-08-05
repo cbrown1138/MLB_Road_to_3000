@@ -1,7 +1,7 @@
 import { readFileSync, readdirSync } from "fs";
 import path from "path";
 
-// Player JSON snapshots are produced by ../get_player_stats.py (one file
+// Player JSON snapshots are produced by ../data_player_get_stats.py (one file
 // per player, at the repo root) and read directly from there — no copy step.
 const DATA_DIR = path.join(process.cwd(), "..");
 const FILE_PATTERN = /^latest_stats_(.+)\.json$/;
@@ -28,34 +28,27 @@ export type PlayerSnapshot = {
   career_avg: string;
   career_pace: number;
   career_pace_remaining: number;
-  career_pace_remaining_date: string;
 
   season_current_team: string;
   season_hits: number;
   season_games_played: number;
   season_pace: number;
   season_pace_remaining: number;
-  season_pace_remaining_date: string;
 
   games30_hits: number;
   games30_pace: number;
   games30_pace_remaining: number;
-  games30_pace_remaining_date: string;
 
   games15_hits: number;
   games15_pace: number;
-  games15_pace_remaining: number;
-  games15_pace_remaining_date: string;
 
   games_30_hits_max: number;
   games_30_hits_max_date: string;
   games_30_hits_max_pace: number;
-  games_30_hits_max_pace_remaining_date: string;
 
   games_30_hits_min: number;
   games_30_hits_min_date: string;
   games_30_hits_min_pace: number;
-  games_30_hits_min_pace_remaining_date: string;
 };
 
 export function slugify(lastName: string): string {

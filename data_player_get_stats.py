@@ -15,9 +15,9 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 
-#player_id = int(sys.argv[1])
-# test altuve
-player_id = 514888
+player_id = int(sys.argv[1])
+## test altuve
+#player_id = 514888
 today = date.today()  # noqa: DTZ011
 season = today.year
 season_start_date = str(season)+'-01-01'
@@ -93,35 +93,35 @@ remaining_hits = 3000 - career_hits
 ##########  calculate career ##########
 career_pace =  career_hits / career_gamesPlayed
 career_pace_remaining = round(remaining_hits / career_pace)
-# get career remaining date estimate
-closest_game = min(team_schedule, key=lambda d: abs(d - today))
-career_pace_remaining_date = team_schedule[team_schedule.index(closest_game)+career_pace_remaining]
+## get career remaining date estimate
+#closest_game = min(team_schedule, key=lambda d: abs(d - today))
+#career_pace_remaining_date = team_schedule[team_schedule.index(closest_game)+career_pace_remaining]
 
 
 ##########  calculate season ##########
 season_pace =  season_hits / season_games_played
 season_pace_remaining = round(remaining_hits / season_pace)
-# get season remaining date estimate
-closest_game = min(team_schedule, key=lambda d: abs(d - today))
-season_pace_remaining_date = team_schedule[team_schedule.index(closest_game)+season_pace_remaining]
+## get season remaining date estimate
+#closest_game = min(team_schedule, key=lambda d: abs(d - today))
+#season_pace_remaining_date = team_schedule[team_schedule.index(closest_game)+season_pace_remaining]
 
 
 ##########  calculate 30 game ##########
 games30_hits = sum(g['stat']['hits'] for g in games_30_data)
 games30_pace =  games30_hits / 30
 games30_pace_remaining = round(remaining_hits / games30_pace)
-# get season remaining date estimate
-closest_game = min(team_schedule, key=lambda d: abs(d - today))
-games30_pace_remaining_date = team_schedule[team_schedule.index(closest_game)+games30_pace_remaining]
+## get season remaining date estimate
+#closest_game = min(team_schedule, key=lambda d: abs(d - today))
+#games30_pace_remaining_date = team_schedule[team_schedule.index(closest_game)+games30_pace_remaining]
 
 
 ##########  calculate 15 game ##########
 games15_hits = sum(g['stat']['hits'] for g in games_15_data)
 games15_pace =  games15_hits / 15
-games15_pace_remaining = round(remaining_hits / games15_pace)
-# get season remaining date estimate
-closest_game = min(team_schedule, key=lambda d: abs(d - today))
-games15_pace_remaining_date = team_schedule[team_schedule.index(closest_game)+games15_pace_remaining]
+#games15_pace_remaining = round(remaining_hits / games15_pace)
+## get season remaining date estimate
+#closest_game = min(team_schedule, key=lambda d: abs(d - today))
+#games15_pace_remaining_date = team_schedule[team_schedule.index(closest_game)+games15_pace_remaining]
 
 
 ##########  calculate best and worst 30 game streak ##########
@@ -146,15 +146,15 @@ games_30_hits_min_date = worst['date']
 
 ### max
 games_30_hits_max_pace_remaining = round(remaining_hits / games_30_hits_max_pace)
-# get season remaining date estimate
-closest_game = min(team_schedule, key=lambda d: abs(d - today))
-games_30_hits_max_pace_remaining_date = team_schedule[team_schedule.index(closest_game)+games_30_hits_max_pace_remaining]
+## get season remaining date estimate
+#closest_game = min(team_schedule, key=lambda d: abs(d - today))
+#games_30_hits_max_pace_remaining_date = team_schedule[team_schedule.index(closest_game)+games_30_hits_max_pace_remaining]
 
 ### min
 games_30_hits_min_pace_remaining = round(remaining_hits / games_30_hits_min_pace)
-# get season remaining date estimate
-closest_game = min(team_schedule, key=lambda d: abs(d - today))
-games_30_hits_min_pace_remaining_date = team_schedule[team_schedule.index(closest_game)+games_30_hits_min_pace_remaining]
+## get season remaining date estimate
+#closest_game = min(team_schedule, key=lambda d: abs(d - today))
+#games_30_hits_min_pace_remaining_date = team_schedule[team_schedule.index(closest_game)+games_30_hits_min_pace_remaining]
 
 
 ##########  calculate games per season ##########
@@ -169,35 +169,35 @@ for g in games_career_data:
 
 
 ##########  calculate current pace ##########
-rolling = []
-idx_first = 0
-idx_last = 50
-for i in range(1,int(games_count/50)+1):
-    games_in_window = games_career_data[idx_first:idx_last]
-    rolling.append({
-        'date': games_in_window[-1]['date'],
-        'hits_50': sum(g['stat']['hits'] for g in games_in_window)
-    })
-    idx_first = idx_first + 50
-    idx_last = idx_last + 50
+# rolling = []
+# idx_first = 0
+# idx_last = 50
+# for i in range(1,int(games_count/50)+1):
+#     games_in_window = games_career_data[idx_first:idx_last]
+#     rolling.append({
+#         'date': games_in_window[-1]['date'],
+#         'hits_50': sum(g['stat']['hits'] for g in games_in_window)
+#     })
+#     idx_first = idx_first + 50
+#     idx_last = idx_last + 50
 
 
 
-# Load, convert to DataFrame, and sort
-games_50_hits = pd.DataFrame(rolling)
+# # Load, convert to DataFrame, and sort
+# games_50_hits = pd.DataFrame(rolling)
 
-games_50_hits = games_50_hits.sort_values('date')
-games_50_hits.reset_index(inplace=True)
-games_50_hits['peroid'] = games_50_hits.index
+# games_50_hits = games_50_hits.sort_values('date')
+# games_50_hits.reset_index(inplace=True)
+# games_50_hits['peroid'] = games_50_hits.index
 
 
-# Build the chart
-plt.figure(figsize=(10, 6))
-sns.barplot(x='peroid', y='hits_50', data=games_50_hits, color='royalblue')
+# # Build the chart
+# plt.figure(figsize=(10, 6))
+# sns.barplot(x='peroid', y='hits_50', data=games_50_hits, color='royalblue')
 
-plt.xticks(rotation=45)
-plt.tight_layout()
-plt.show()
+# plt.xticks(rotation=45)
+# plt.tight_layout()
+# plt.show()
 
 
 
@@ -229,34 +229,34 @@ data = {
     'career_avg': career_avg,
     'career_pace': career_pace,
     'career_pace_remaining': career_pace_remaining,
-    'career_pace_remaining_date': career_pace_remaining_date.strftime("%B %d, %Y"),
+ #   'career_pace_remaining_date': career_pace_remaining_date.strftime("%B %d, %Y"),
 
     'season_current_team': season_current_team,
     'season_hits': season_hits,
     'season_games_played': season_games_played,
     'season_pace': season_pace,
     'season_pace_remaining': season_pace_remaining,
-    'season_pace_remaining_date': season_pace_remaining_date.strftime("%B %d, %Y"),
+ #   'season_pace_remaining_date': season_pace_remaining_date.strftime("%B %d, %Y"),
 
     'games30_hits': games30_hits,
     'games30_pace': games30_pace,
     'games30_pace_remaining': games30_pace_remaining,
-    'games30_pace_remaining_date': games30_pace_remaining_date.strftime("%B %d, %Y"),
+ #   'games30_pace_remaining_date': games30_pace_remaining_date.strftime("%B %d, %Y"),
 
     'games15_hits': games15_hits,
     'games15_pace': games15_pace,    
-    'games15_pace_remaining': games15_pace_remaining,
-    'games15_pace_remaining_date': games15_pace_remaining_date.strftime("%B %d, %Y"),
+ #   'games15_pace_remaining': games15_pace_remaining,
+ #   'games15_pace_remaining_date': games15_pace_remaining_date.strftime("%B %d, %Y"),
 
     'games_30_hits_max': games_30_hits_max,
     'games_30_hits_max_date': games_30_hits_max_date,
     'games_30_hits_max_pace': games_30_hits_max_pace,
-    'games_30_hits_max_pace_remaining_date': games_30_hits_max_pace_remaining_date.strftime("%B %d, %Y"),
+ #   'games_30_hits_max_pace_remaining_date': games_30_hits_max_pace_remaining_date.strftime("%B %d, %Y"),
 
     'games_30_hits_min': games_30_hits_min,
     'games_30_hits_min_date': games_30_hits_min_date,
     'games_30_hits_min_pace': games_30_hits_min_pace,
-    'games_30_hits_min_pace_remaining_date': games_30_hits_min_pace_remaining_date.strftime("%B %d, %Y"),
+ #   'games_30_hits_min_pace_remaining_date': games_30_hits_min_pace_remaining_date.strftime("%B %d, %Y"),
 
 }
 

@@ -6,14 +6,12 @@ function StreakCard({
   hits,
   date,
   pace,
-  projectedDate,
 }: {
   tone: "hot" | "cold";
   label: string;
   hits: number;
   date: string;
   pace: number;
-  projectedDate: string;
 }) {
   const accent =
     tone === "hot"
@@ -31,14 +29,6 @@ function StreakCard({
       <p className="text-sm text-zinc-500 dark:text-zinc-400">
         in a 30-game span ending {date} &middot; {pace.toFixed(3)} hits/game
       </p>
-      <div className="mt-4 border-t border-zinc-100 pt-3 dark:border-zinc-800">
-        <p className="text-sm text-zinc-500 dark:text-zinc-400">
-          at that pace, 3,000 arrives around{" "}
-          <span className="font-semibold text-zinc-950 dark:text-zinc-50">
-            {projectedDate}
-          </span>
-        </p>
-      </div>
     </div>
   );
 }
@@ -56,7 +46,6 @@ export function HotColdBand({ snapshot }: { snapshot: PlayerSnapshot }) {
           hits={snapshot.games_30_hits_max}
           date={snapshot.games_30_hits_max_date}
           pace={snapshot.games_30_hits_max_pace}
-          projectedDate={snapshot.games_30_hits_max_pace_remaining_date}
         />
         <StreakCard
           tone="cold"
@@ -64,7 +53,6 @@ export function HotColdBand({ snapshot }: { snapshot: PlayerSnapshot }) {
           hits={snapshot.games_30_hits_min}
           date={snapshot.games_30_hits_min_date}
           pace={snapshot.games_30_hits_min_pace}
-          projectedDate={snapshot.games_30_hits_min_pace_remaining_date}
         />
       </div>
     </section>
