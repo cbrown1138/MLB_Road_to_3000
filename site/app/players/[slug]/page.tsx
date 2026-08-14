@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getAllPlayers, getPlayerBySlug, getMilestone, slugify } from "@/lib/players";
 import { PlayerHeader } from "@/components/PlayerHeader";
@@ -26,8 +27,17 @@ export default async function PlayerPage({
   const milestone = getMilestone();
 
   return (
-    <div className="flex min-h-screen w-full flex-col items-center gap-8 bg-zinc-950 px-4 py-12 sm:px-8">
-      <PlayerHeader snapshot={snapshot} />
+    <div className="flex min-h-screen w-full flex-col items-center gap-8 bg-green-950 px-4 py-12 sm:px-8">
+      <header className="flex w-full max-w-3xl flex-col items-start gap-2">
+        <h1 className="font-[family-name:var(--font-tourney)] text-4xl font-bold tracking-wide text-zinc-200">
+          Road to 3,000
+        </h1>
+        <Link
+          href="/"
+          className="text-sm text-zinc-400 hover:text-zinc-200"
+        > &larr; All players
+        </Link>
+      </header>
       <HeroCounter snapshot={snapshot} milestone={milestone} />
       <PaceGrid snapshot={snapshot} />
       <HotColdBand snapshot={snapshot} />
