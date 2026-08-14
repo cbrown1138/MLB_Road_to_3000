@@ -5,6 +5,7 @@ Created on Thu Apr  9 21:54:19 2026
 
 """
 import json
+import os
 import sys
 from datetime import date, datetime
 import statsapi as mlb
@@ -260,7 +261,8 @@ data = {
 
 }
 
-fileName = 'latest_stats_'+player_lastName+'.json'
+script_dir = os.path.dirname(os.path.abspath(__file__))
+fileName = os.path.join(script_dir, 'site', 'data', 'latest_stats_'+player_lastName+'.json')
 
 with open(fileName, 'w') as f:
     json.dump(data, f, indent=2)

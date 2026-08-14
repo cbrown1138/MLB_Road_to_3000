@@ -13,20 +13,17 @@ function StreakCard({
   date: string;
   pace: number;
 }) {
-  const accent =
-    tone === "hot"
-      ? "text-orange-600 dark:text-orange-400"
-      : "text-sky-600 dark:text-sky-400";
+  const accent = tone === "hot" ? "text-orange-400" : "text-sky-400";
 
   return (
-    <div className="rounded-xl bg-white p-5 shadow-sm ring-1 ring-zinc-200 dark:bg-zinc-900 dark:ring-zinc-800">
+    <div className="rounded-xl bg-zinc-900 p-5 shadow-sm ring-1 ring-zinc-800">
       <p className={`text-sm font-medium uppercase tracking-wide ${accent}`}>
         {label}
       </p>
-      <p className="mt-2 text-2xl font-semibold tabular-nums text-zinc-950 dark:text-zinc-50">
+      <p className="mt-2 text-2xl font-semibold tabular-nums text-zinc-50">
         {hits} hits
       </p>
-      <p className="text-sm text-zinc-500 dark:text-zinc-400">
+      <p className="text-sm text-zinc-400">
         in a 30-game span ending {date} &middot; {pace.toFixed(3)} hits/game
       </p>
     </div>
@@ -36,7 +33,7 @@ function StreakCard({
 export function HotColdBand({ snapshot }: { snapshot: PlayerSnapshot }) {
   return (
     <section className="w-full max-w-3xl">
-      <h2 className="mb-3 text-lg font-semibold text-zinc-900 dark:text-zinc-100">
+      <h2 className="mb-3 text-lg font-semibold text-zinc-100">
         Best &amp; worst 30-game stretches
       </h2>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">

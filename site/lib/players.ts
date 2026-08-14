@@ -2,8 +2,8 @@ import { readFileSync, readdirSync } from "fs";
 import path from "path";
 
 // Player JSON snapshots are produced by ../data_player_get_stats.py (one file
-// per player, at the repo root) and read directly from there — no copy step.
-const DATA_DIR = path.join(process.cwd(), "..");
+// per player) and read directly from site/data — no copy step.
+const DATA_DIR = path.join(process.cwd(), "data");
 const FILE_PATTERN = /^latest_stats_(.+)\.json$/;
 const MILESTONE = 3000;
 
@@ -53,6 +53,40 @@ export type PlayerSnapshot = {
 
 export function slugify(lastName: string): string {
   return lastName.toLowerCase();
+}
+
+// MLB player_birthCountry values -> ISO 3166-1 alpha-2 codes, for flag emoji.
+const BIRTH_COUNTRY_CODES: Record<string, string> = {
+  USA: "US",
+  "United States": "US",
+  "Dominican Republic": "DO",
+  Venezuela: "VE",
+  "Puerto Rico": "PR",
+  Cuba: "CU",
+  Mexico: "MX",
+  Panama: "PA",
+  Colombia: "CO",
+  Curacao: "CW",
+  Aruba: "AW",
+  Japan: "JP",
+  "South Korea": "KR",
+  Korea: "KR",
+  Taiwan: "TW",
+  Canada: "CA",
+  Nicaragua: "NI",
+  Honduras: "HN",
+  Brazil: "BR",
+  Bahamas: "BS",
+  Jamaica: "JM",
+  Australia: "AU",
+  Netherlands: "NL",
+  Germany: "DE",
+};
+
+export function countryFlag(country: string): string {
+  const code = BIRTH_COUNTRY_CODES[country];
+  if (!code) return "";
+  return [...code].map((c) => String.fromCodePoint(127397 + c.charCodeAt(0))).join("");
 }
 
 export function getAllPlayers(): PlayerSnapshot[] {
