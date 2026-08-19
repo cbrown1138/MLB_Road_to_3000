@@ -13,10 +13,16 @@ function StreakCard({
   date: string;
   pace: number;
 }) {
-  const accent = tone === "hot" ? "text-orange-400" : "text-sky-400";
+  const accent = tone === "hot" ? "text-emerald-400" : "text-red-300";
+  const borderAccent =
+    tone === "hot" ? "border-emerald-400" : "border-red-300";
+  const [year, month, day] = date.split("-");
+  const formattedDate = `${month}/${day}/${year}`;
 
   return (
-    <div className="rounded-xl bg-sky-800 p-5 shadow-sm ring-1 ring-zinc-800">
+    <div
+      className={`rounded-xl border-l-4 bg-emerald-900 p-5 shadow-sm ring-1 ring-zinc-800 ${borderAccent}`}
+    >
       <p className={`text-sm font-medium uppercase tracking-wide ${accent}`}>
         {label}
       </p>
@@ -24,7 +30,7 @@ function StreakCard({
         {hits} hits
       </p>
       <p className="text-sm text-zinc-200">
-        in a 30-game span ending {date} &middot; {pace.toFixed(3)} hits/game
+        {formattedDate}
       </p>
     </div>
   );
@@ -32,7 +38,7 @@ function StreakCard({
 
 export function HotColdBand({ snapshot }: { snapshot: PlayerSnapshot }) {
   return (
-    <section className="w-full max-w-3xl">
+    <section className="w-full max-w-5xl">
       <h2 className="mb-3 text-lg font-semibold text-zinc-200">
         Best &amp; worst 30-game stretches
       </h2>
