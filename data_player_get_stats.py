@@ -3,17 +3,21 @@ Created on Thu Apr  9 21:54:19 2026
 
 @author: christopherbrown
 
+Get individual MLB player stats for Road to 3000
+
+Future will add predictions and season charts by hits and games
+
 """
 import json
 import os
 import sys
 from datetime import date, datetime
 import statsapi as mlb
-from sklearn.linear_model import LinearRegression
-import numpy as np
-import pandas as pd
-import seaborn as sns
-import matplotlib.pyplot as plt
+# from sklearn.linear_model import LinearRegression
+# import numpy as np
+# import pandas as pd
+# import seaborn as sns
+# import matplotlib.pyplot as plt
 
 
 player_id = int(sys.argv[1])

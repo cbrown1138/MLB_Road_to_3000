@@ -106,3 +106,8 @@ export function getPlayerBySlug(slug: string): PlayerSnapshot | undefined {
 export function getMilestone(): number {
   return MILESTONE;
 }
+
+export function getLastUpdated(): string {
+  const players = getAllPlayers();
+  return players[0]?.today ?? "";
+}
