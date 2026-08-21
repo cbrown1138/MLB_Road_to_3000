@@ -1,4 +1,5 @@
 import type { PlayerSnapshot } from "@/lib/players";
+import { slugify } from "@/lib/players";
 import Image from "next/image";
 
 export function HeroCounter({
@@ -16,7 +17,7 @@ export function HeroCounter({
   return (
     <section className="relative aspect-[16/9] min-h-[360px] w-full max-w-5xl overflow-hidden rounded-2xl shadow-sm ring-1 ring-zinc-800">
       <Image
-        src={`/${snapshot.player_lastName}2.jpeg`}
+        src={`/${slugify(snapshot.player_lastName)}2.jpeg`}
         alt={snapshot.player_fullName}
         fill
         sizes="(max-width: 768px) 100vw, 768px"
