@@ -1,0 +1,21 @@
+version: 0.2
+
+# Expects these as environment variables on the CodeBuild project itself
+# (Part B setup), not hardcoded here: DATA_BUCKET, SITE_BUCKET, DISTRIBUTION_ID
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 20
+  pre_build:
+    commands:
+      - aws s3 sync "s3://${DATA_BUCKET}/" site/data/ --delete --exclude "history/*"
+  build:
+    commands:
+      - cd site
+      - npm ci
+      - npm run build
+  post_build:
+    commands:
+      - aws s3 sync ./out "s3://${SITE_BUCKET}" --delete
+      - aws cloudfront create-invalidation --distribution-id "${DISTRIBUTION_ID}" --paths "/*"
