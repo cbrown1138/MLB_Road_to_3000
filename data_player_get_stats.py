@@ -159,12 +159,23 @@ def fetch_player_stats(player_id: int) -> dict:
     #closest_game = min(team_schedule, key=lambda d: abs(d - today))
     #games_30_hits_min_pace_remaining_date = team_schedule[team_schedule.index(closest_game)+games_30_hits_min_pace_remaining]
 
-
     ##########  calculate games per season ##########
-    # games_per_season = {}
-    # for g in games_career_data:
-    #    season = g['season']
-    #    games_per_season[season] = games_per_season.get(season, 0) + 1
+    games_per_season = {}
+    for g in games_career_data:
+        season = g['season']
+        games_per_season[season] = games_per_season.get(season, 0) + 1
+    games_per_season = dict(reversed(games_per_season.items()))
+
+    ##########  calculate hits per season ##########
+    hits_per_season = {}
+    for g in games_career_data:
+        season = g['season']
+        hits_per_season[season] = sum([g['stat']['hits'] for g in games_career_data if g['season'] == season])
+    hits_per_season = dict(reversed(hits_per_season.items()))
+
+
+
+
 
 
     ##########  predict games per season in future ##########
@@ -261,6 +272,10 @@ def fetch_player_stats(player_id: int) -> dict:
      #   'games_30_hits_min_pace_remaining_date': games_30_hits_min_pace_remaining_date.strftime("%B %d, %Y"),
 
     }
+
+    # add dict
+    data['games_per_season'] = games_per_season
+    data['hits_per_season'] = hits_per_season
 
     return data
 

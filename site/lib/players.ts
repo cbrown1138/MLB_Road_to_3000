@@ -49,6 +49,10 @@ export type PlayerSnapshot = {
   games_30_hits_min: number;
   games_30_hits_min_date: string;
   games_30_hits_min_pace: number;
+
+  // Keyed by season (year as string); produced by data_player_get_stats.py.
+  games_per_season?: Record<string, number>;
+  hits_per_season?: Record<string, number>;
 };
 
 export function slugify(lastName: string): string {

@@ -5,6 +5,7 @@ import { PlayerHeader } from "@/components/PlayerHeader";
 import { HeroCounter } from "@/components/HeroCounter";
 import { PaceGrid } from "@/components/PaceGrid";
 import { HotColdBand } from "@/components/HotColdBand";
+import { SeasonBars } from "@/components/SeasonBars";
 
 export function generateStaticParams() {
   return getAllPlayers().map((player) => ({
@@ -41,6 +42,7 @@ export default async function PlayerPage({
       <HeroCounter snapshot={snapshot} milestone={milestone} />
       <PaceGrid snapshot={snapshot} />
       <HotColdBand snapshot={snapshot} />
+      <SeasonBars snapshot={snapshot} />
     </div>
   );
 }
