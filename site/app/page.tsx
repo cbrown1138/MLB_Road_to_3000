@@ -9,7 +9,7 @@ export default function Home() {
   return (
     <div className="flex min-h-screen w-full flex-col items-center gap-8 bg-sky-950 px-4 py-12 sm:px-8">
       <header className="flex w-full max-w-6xl flex-col items-center gap-2">
-        <h1 className="font-[family-name:var(--font-tourney)] text-7xl font-bold tracking-wide text-zinc-200">
+        <h1 className="font-[family-name:var(--font-tourney)] text-7xl font-bold tracking-wide text-zinc-200 text-center">
           Road to 3,000
         </h1>
         <br/>

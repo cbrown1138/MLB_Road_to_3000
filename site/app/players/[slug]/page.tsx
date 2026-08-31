@@ -1,6 +1,12 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getAllPlayers, getPlayerBySlug, getMilestone, slugify } from "@/lib/players";
+import {
+  getAllPlayers,
+  getPlayerBySlug,
+  getMilestone,
+  getLeagueHitsMeanBySeason,
+  slugify,
+} from "@/lib/players";
 import { PlayerHeader } from "@/components/PlayerHeader";
 import { HeroCounter } from "@/components/HeroCounter";
 import { PaceGrid } from "@/components/PaceGrid";
@@ -42,7 +48,10 @@ export default async function PlayerPage({
       <HeroCounter snapshot={snapshot} milestone={milestone} />
       <PaceGrid snapshot={snapshot} />
       <HotColdBand snapshot={snapshot} />
-      <SeasonBars snapshot={snapshot} />
+      <SeasonBars
+        snapshot={snapshot}
+        leagueHitsMean={getLeagueHitsMeanBySeason()}
+      />
     </div>
   );
 }

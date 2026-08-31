@@ -1,0 +1,182 @@
+{
+  "all_qualified_hitters_mean_season": [
+    {
+      "Season": 2005,
+      "Hits_Mean": 142.2463054187192
+    },
+    {
+      "Season": 2006,
+      "Hits_Mean": 146.98019801980197
+    },
+    {
+      "Season": 2007,
+      "Hits_Mean": 146.72
+    },
+    {
+      "Season": 2008,
+      "Hits_Mean": 140.2128712871287
+    },
+    {
+      "Season": 2009,
+      "Hits_Mean": 142.505
+    },
+    {
+      "Season": 2010,
+      "Hits_Mean": 137.35323383084577
+    },
+    {
+      "Season": 2011,
+      "Hits_Mean": 134.39408866995075
+    },
+    {
+      "Season": 2012,
+      "Hits_Mean": 136.08955223880596
+    },
+    {
+      "Season": 2013,
+      "Hits_Mean": 134.65346534653466
+    },
+    {
+      "Season": 2014,
+      "Hits_Mean": 134.985
+    },
+    {
+      "Season": 2015,
+      "Hits_Mean": 135.08
+    },
+    {
+      "Season": 2016,
+      "Hits_Mean": 138.13432835820896
+    },
+    {
+      "Season": 2017,
+      "Hits_Mean": 135.355
+    },
+    {
+      "Season": 2018,
+      "Hits_Mean": 130.055
+    },
+    {
+      "Season": 2019,
+      "Hits_Mean": 132.34158415841586
+    },
+    {
+      "Season": 2020,
+      "Hits_Mean": 47.45145631067961
+    },
+    {
+      "Season": 2021,
+      "Hits_Mean": 124.5960591133005
+    },
+    {
+      "Season": 2022,
+      "Hits_Mean": 124.54228855721394
+    },
+    {
+      "Season": 2023,
+      "Hits_Mean": 128.41666666666666
+    },
+    {
+      "Season": 2024,
+      "Hits_Mean": 125.29207920792079
+    },
+    {
+      "Season": 2025,
+      "Hits_Mean": 128.16
+    },
+    {
+      "Season": 2026,
+      "Hits_Mean": 108.39800995024876
+    }
+  ],
+  "all_qualified_hitters_max_season": [
+    {
+      "Season": 2005,
+      "Hits_Max": 221
+    },
+    {
+      "Season": 2006,
+      "Hits_Max": 224
+    },
+    {
+      "Season": 2007,
+      "Hits_Max": 238
+    },
+    {
+      "Season": 2008,
+      "Hits_Max": 213
+    },
+    {
+      "Season": 2009,
+      "Hits_Max": 225
+    },
+    {
+      "Season": 2010,
+      "Hits_Max": 214
+    },
+    {
+      "Season": 2011,
+      "Hits_Max": 213
+    },
+    {
+      "Season": 2012,
+      "Hits_Max": 216
+    },
+    {
+      "Season": 2013,
+      "Hits_Max": 199
+    },
+    {
+      "Season": 2014,
+      "Hits_Max": 225
+    },
+    {
+      "Season": 2015,
+      "Hits_Max": 205
+    },
+    {
+      "Season": 2016,
+      "Hits_Max": 216
+    },
+    {
+      "Season": 2017,
+      "Hits_Max": 213
+    },
+    {
+      "Season": 2018,
+      "Hits_Max": 192
+    },
+    {
+      "Season": 2019,
+      "Hits_Max": 206
+    },
+    {
+      "Season": 2020,
+      "Hits_Max": 78
+    },
+    {
+      "Season": 2021,
+      "Hits_Max": 195
+    },
+    {
+      "Season": 2022,
+      "Hits_Max": 199
+    },
+    {
+      "Season": 2023,
+      "Hits_Max": 217
+    },
+    {
+      "Season": 2024,
+      "Hits_Max": 211
+    },
+    {
+      "Season": 2025,
+      "Hits_Max": 184
+    },
+    {
+      "Season": 2026,
+      "Hits_Max": 163
+    }
+  ]
+}

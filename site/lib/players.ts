@@ -115,3 +115,18 @@ export function getLastUpdated(): string {
   const players = getAllPlayers();
   return players[0]?.today ?? "";
 }
+
+// League-wide hits per season for qualified hitters, produced by
+// ../data_league_get_stats.py. Keyed by season (year as string).
+export function getLeagueHitsMeanBySeason(): Record<string, number> {
+  try {
+    const raw = readFileSync(path.join(DATA_DIR, "league_stats.json"), "utf-8");
+    const parsed = JSON.parse(raw) as {
+      all_qualified_hitters_mean_season?: { Season: number; Hits_Mean: number }[];
+    };
+    const rows = parsed.all_qualified_hitters_mean_season ?? [];
+    return Object.fromEntries(rows.map((r) => [String(r.Season), r.Hits_Mean]));
+  } catch {
+    return {};
+  }
+}
