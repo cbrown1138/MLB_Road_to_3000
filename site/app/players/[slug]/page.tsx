@@ -5,6 +5,7 @@ import {
   getPlayerBySlug,
   getMilestone,
   getLeagueHitsMeanBySeason,
+  getLeagueHitsMaxBySeason,
   slugify,
 } from "@/lib/players";
 import { PlayerHeader } from "@/components/PlayerHeader";
@@ -51,6 +52,7 @@ export default async function PlayerPage({
       <SeasonBars
         snapshot={snapshot}
         leagueHitsMean={getLeagueHitsMeanBySeason()}
+        leagueHitsMax={getLeagueHitsMaxBySeason()}
       />
     </div>
   );

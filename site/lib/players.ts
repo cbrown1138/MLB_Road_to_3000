@@ -130,3 +130,18 @@ export function getLeagueHitsMeanBySeason(): Record<string, number> {
     return {};
   }
 }
+
+// League-wide max hits per season among qualified hitters, produced by
+// ../data_league_get_stats.py. Keyed by season (year as string).
+export function getLeagueHitsMaxBySeason(): Record<string, number> {
+  try {
+    const raw = readFileSync(path.join(DATA_DIR, "league_stats.json"), "utf-8");
+    const parsed = JSON.parse(raw) as {
+      all_qualified_hitters_max_season?: { Season: number; Hits_Max: number }[];
+    };
+    const rows = parsed.all_qualified_hitters_max_season ?? [];
+    return Object.fromEntries(rows.map((r) => [String(r.Season), r.Hits_Max]));
+  } catch {
+    return {};
+  }
+}
