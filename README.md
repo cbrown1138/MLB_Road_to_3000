@@ -1,5 +1,7 @@
 # MLB Road to 3,000
 
+https://roadto3000.click
+
 Only 33 batters in MLB history have reached 3,000 career hits. This project tracks the small group of active players with a realistic shot at joining them, and publishes a daily-updated site showing how close each one is.
 
 ## What the site does
