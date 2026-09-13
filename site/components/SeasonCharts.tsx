@@ -58,13 +58,11 @@ function getFixedMaxTicks(maxValue: number, tickCount = 4): number[] {
 function SeasonLineChart({
   title,
   entries,
-  yLabel,
   yMax,
   trends,
 }: {
   title: string;
   entries: Entry[];
-  yLabel: string;
   // Pin the axis max to a fixed value instead of auto-scaling to the data.
   yMax?: number;
   // Optional overlay lines, keyed by season. Only seasons already present in
@@ -131,7 +129,7 @@ function SeasonLineChart({
         <p className="text-sm font-medium uppercase tracking-wide text-zinc-200">
           {title}
         </p>
-        {trendLines.length > 0 && (
+        {trendLines.length > 0 ? (
           <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1">
             {trendLines.map((t) => (
               <p
@@ -146,16 +144,16 @@ function SeasonLineChart({
               </p>
             ))}
           </div>
+        ) : (
+          // invisible placeholder — keeps this chart's plot area lined up
+          // with charts that do show a legend row (e.g. Hits by season)
+          <p className="invisible mt-1 text-[11px]" aria-hidden>
+            &nbsp;
+          </p>
         )}
       </div>
 
       <div className="flex gap-2">
-        {/* y-axis title */}
-        <div className="flex shrink-0" style={{ height: CHART_HEIGHT }}>
-          <span className="flex items-center whitespace-nowrap text-[10px] font-medium uppercase tracking-wide text-zinc-200 [writing-mode:vertical-rl]">
-            <span className="rotate-180">{yLabel}</span>
-          </span>
-        </div>
 
         {/* y-axis ticks */}
         <div
@@ -245,7 +243,7 @@ function SeasonLineChart({
   );
 }
 
-export function SeasonBars({
+export function SeasonCharts({
   snapshot,
   leagueHitsMean,
   leagueHitsMax,
@@ -283,7 +281,6 @@ export function SeasonBars({
           <SeasonLineChart
             title="Games by season"
             entries={games}
-            yLabel="Games"
             yMax={162}
           />
         )}
@@ -291,7 +288,6 @@ export function SeasonBars({
           <SeasonLineChart
             title="Hits by season"
             entries={hits}
-            yLabel="Hits"
             trends={hitsTrends}
           />
         )}
