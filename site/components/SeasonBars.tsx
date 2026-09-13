@@ -10,6 +10,8 @@ type TrendLine = {
 };
 
 const CHART_HEIGHT = 176; // px, matches h-44
+const PLAYER_LINE_COLOR = "#34d399"; // emerald-400
+const PLAYER_FILL_COLOR = "rgba(52, 211, 153, 0.25)";
 
 function toEntries(dict: Record<string, number> | undefined): Entry[] {
   if (!dict) return [];
@@ -53,7 +55,7 @@ function getFixedMaxTicks(maxValue: number, tickCount = 4): number[] {
   return ticks;
 }
 
-function BarChart({
+function SeasonLineChart({
   title,
   entries,
   yLabel,
@@ -107,6 +109,22 @@ function BarChart({
       .filter((p): p is string => p !== null),
   }));
 
+  // Player's own data — a filled line, matching the "filled" style in
+  // https://www.chartjs.org/docs/latest/samples/line/styling.html
+  const playerPoints = entries.map((e, i) => ({
+    x: ((i + 0.5) / entries.length) * 100,
+    y: 100 - (e.value / max) * 100,
+  }));
+  const playerLine = playerPoints.map((p) => `${p.x},${p.y}`).join(" ");
+  const playerArea =
+    playerPoints.length > 0
+      ? [
+          `${playerPoints[0].x},100`,
+          playerLine,
+          `${playerPoints[playerPoints.length - 1].x},100`,
+        ].join(" ")
+      : "";
+
   return (
     <div className="rounded-xl bg-emerald-900 p-5 shadow-sm ring-1 ring-zinc-800">
       <div className="mb-4">
@@ -150,23 +168,30 @@ function BarChart({
         </div>
 
         <div className="min-w-0 flex-1">
-          {/* plot area — flex columns stretch to full height so % bars resolve */}
+          {/* plot area */}
           <div
-            className="relative flex gap-1 border-b border-zinc-200"
+            className="relative border-b border-zinc-200"
             style={{ height: CHART_HEIGHT, ...gridStyle }}
           >
-            {entries.map((e) => (
-              <div
-                key={e.season}
-                className="flex min-w-[1.25rem] flex-1 items-end justify-center"
+            {playerPoints.length > 1 && (
+              <svg
+                className="pointer-events-none absolute inset-0 h-full w-full overflow-visible"
+                viewBox="0 0 100 100"
+                preserveAspectRatio="none"
+                aria-hidden
               >
-                <div
-                  className="w-2 rounded-t bg-emerald-400"
-                  style={{ height: `${(e.value / max) * 100}%` }}
-                  title={`${e.season}: ${e.value}`}
+                <polygon points={playerArea} fill={PLAYER_FILL_COLOR} stroke="none" />
+                <polyline
+                  points={playerLine}
+                  fill="none"
+                  stroke={PLAYER_LINE_COLOR}
+                  strokeWidth={2}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  vectorEffect="non-scaling-stroke"
                 />
-              </div>
-            ))}
+              </svg>
+            )}
 
             {trendLines.map(
               (t) =>
@@ -255,7 +280,7 @@ export function SeasonBars({
       </h2>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-1 lg:grid-cols-2">
         {games.length > 0 && (
-          <BarChart
+          <SeasonLineChart
             title="Games by season"
             entries={games}
             yLabel="Games"
@@ -263,7 +288,7 @@ export function SeasonBars({
           />
         )}
         {hits.length > 0 && (
-          <BarChart
+          <SeasonLineChart
             title="Hits by season"
             entries={hits}
             yLabel="Hits"

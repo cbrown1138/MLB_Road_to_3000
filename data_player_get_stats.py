@@ -47,6 +47,7 @@ def fetch_player_stats(player_id: int) -> dict:
     player_Position = player_data["people"][0]["primaryPosition"]['abbreviation']
 
 
+
     ##########  season stats imports ##########
     season_data = mlb.player_stat_data(player_id, group="hitting", type="season")
     season_current_team = season_data['current_team']
@@ -277,6 +278,12 @@ def fetch_player_stats(player_id: int) -> dict:
     data['games_per_season'] = games_per_season
     data['hits_per_season'] = hits_per_season
 
+
+    # clean accents names
+    for key in ['player_lastName','player_fullName','player_birthCity','player_birthCountry']:
+        data[key] = data[key].replace("í", "i")
+        data[key] = data[key].replace("é", "e")
+
     return data
 
 
@@ -311,3 +318,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+

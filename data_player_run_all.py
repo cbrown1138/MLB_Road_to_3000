@@ -3,12 +3,16 @@ import sys
 
 player_ids = [
     514888, # Jose Altuve
-#    545361, # Mike Trout
     605141, # Mookie Betts
     518692, # Freddie Freeman
-#    592450, # Aaron Judge
     592518, # Manny Machado
-#    660271, # Shohei Ohtani
+
+    545361, # Mike Trout
+    547180, # Bryce Harper
+    665742, # Juan Soto 
+    608070, # José Ramirez 
+    596019, # Francisco Lindor
+    593428, # Xander Bogaerts 
 ]
 
 def main():

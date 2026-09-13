@@ -1,5 +1,5 @@
 {
-  "today": "August 30, 2026",
+  "today": "September 13, 2026",
   "season": "2011",
   "player_lastName": "Altuve",
   "player_fullName": "Jose Altuve",
@@ -8,24 +8,24 @@
   "player_birthCity": "Maracay",
   "player_birthCountry": "Venezuela",
   "player_Position": "2B",
-  "remaining_hits": 507,
+  "remaining_hits": 496,
   "career_mlb_debut": "2011-07-20",
-  "career_gamesPlayed": 2087,
-  "career_atBats": 8306,
-  "career_hits": 2493,
+  "career_gamesPlayed": 2099,
+  "career_atBats": 8354,
+  "career_hits": 2504,
   "career_avg": ".300",
-  "career_pace": 1.1945376137997126,
-  "career_pace_remaining": 424,
+  "career_pace": 1.1929490233444497,
+  "career_pace_remaining": 416,
   "season_current_team": "Houston Astros",
-  "season_hits": 105,
-  "season_games_played": 111,
-  "season_pace": 0.9459459459459459,
-  "season_pace_remaining": 536,
-  "games30_hits": 31,
-  "games30_pace": 1.0333333333333334,
-  "games30_pace_remaining": 491,
-  "games15_hits": 16,
-  "games15_pace": 1.0666666666666667,
+  "season_hits": 116,
+  "season_games_played": 123,
+  "season_pace": 0.943089430894309,
+  "season_pace_remaining": 526,
+  "games30_hits": 27,
+  "games30_pace": 0.9,
+  "games30_pace_remaining": 551,
+  "games15_hits": 14,
+  "games15_pace": 0.9333333333333333,
   "games_30_hits_max": 59,
   "games_30_hits_max_date": "2017-08-11",
   "games_30_hits_max_pace": 1.9666666666666666,
@@ -48,7 +48,7 @@
     "2023": 90,
     "2024": 153,
     "2025": 155,
-    "2026": 111
+    "2026": 123
   },
   "hits_per_season": {
     "2011": 61,
@@ -66,6 +66,6 @@
     "2023": 112,
     "2024": 185,
     "2025": 156,
-    "2026": 105
+    "2026": 116
   }
 }
