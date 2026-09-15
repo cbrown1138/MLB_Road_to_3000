@@ -90,7 +90,7 @@ def save_s3(data: dict, bucket: str) -> None:
     import boto3
     s3 = boto3.client('s3')
     body = json.dumps(data, indent=2).encode('utf-8')
-    latest_key = 'league_stats'+'.json'
+    latest_key = 'stats_league'+'.json'
     history_key = 'history/'+date.today().isoformat()+'/'+latest_key
     s3.put_object(Bucket=bucket, Key=latest_key, Body=body, ContentType='application/json')
     s3.put_object(Bucket=bucket, Key=history_key, Body=body, ContentType='application/json')

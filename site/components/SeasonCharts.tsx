@@ -80,16 +80,26 @@ function SeasonLineChart({
       : getNiceTicks(rawMax);
   const max = ticks[ticks.length - 1];
 
+  // y-axis (horizontal) lines at each non-zero tick, x-axis (vertical) lines
+  // at each season — drawn as background layers so they sit behind the data.
   const gridTicks = ticks.filter((t) => t > 0);
-  const gridStyle = gridTicks.length
+  const gridLines = [
+    ...gridTicks.map((t) => ({
+      size: "100% 1px",
+      position: `0 ${100 - (t / max) * 100}%`,
+    })),
+    ...entries.map((_, i) => ({
+      size: "1px 100%",
+      position: `${((i + 0.5) / entries.length) * 100}% 0`,
+    })),
+  ];
+  const gridStyle = gridLines.length
     ? {
-        backgroundImage: gridTicks
+        backgroundImage: gridLines
           .map(() => "linear-gradient(rgba(255,255,255,0.12), rgba(255,255,255,0.12))")
           .join(", "),
-        backgroundSize: gridTicks.map(() => "100% 1px").join(", "),
-        backgroundPosition: gridTicks
-          .map((t) => `0 ${100 - (t / max) * 100}%`)
-          .join(", "),
+        backgroundSize: gridLines.map((l) => l.size).join(", "),
+        backgroundPosition: gridLines.map((l) => l.position).join(", "),
         backgroundRepeat: "no-repeat",
       }
     : undefined;
@@ -289,6 +299,7 @@ export function SeasonCharts({
             title="Hits by season"
             entries={hits}
             trends={hitsTrends}
+            yMax={262}
           />
         )}
       </div>

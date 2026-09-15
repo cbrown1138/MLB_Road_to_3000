@@ -3,9 +3,12 @@ import path from "path";
 
 // Player JSON snapshots are produced by ../data_player_get_stats.py (one file
 // per player) and read directly from site/data — no copy step.
-const DATA_DIR = path.join(process.cwd(), "data");
-const FILE_PATTERN = /^latest_stats_(.+)\.json$/;
+const DATA_DIR = path.join(process.cwd(), "data", "active");
+const FILE_PATTERN = /^stats_(.+)\.json$/;
 const MILESTONE = 3000;
+
+// Lives directly under data/, not data/active/ — it's not a per-player file.
+const LEAGUE_STATS_PATH = path.join(process.cwd(), "data", "stats_league.json");
 
 export type PlayerSnapshot = {
   today: string;
@@ -120,7 +123,7 @@ export function getLastUpdated(): string {
 // ../data_league_get_stats.py. Keyed by season (year as string).
 export function getLeagueHitsMeanBySeason(): Record<string, number> {
   try {
-    const raw = readFileSync(path.join(DATA_DIR, "league_stats.json"), "utf-8");
+    const raw = readFileSync(LEAGUE_STATS_PATH, "utf-8");
     const parsed = JSON.parse(raw) as {
       all_qualified_hitters_mean_season?: { Season: number; Hits_Mean: number }[];
     };
@@ -135,7 +138,7 @@ export function getLeagueHitsMeanBySeason(): Record<string, number> {
 // ../data_league_get_stats.py. Keyed by season (year as string).
 export function getLeagueHitsMaxBySeason(): Record<string, number> {
   try {
-    const raw = readFileSync(path.join(DATA_DIR, "league_stats.json"), "utf-8");
+    const raw = readFileSync(LEAGUE_STATS_PATH, "utf-8");
     const parsed = JSON.parse(raw) as {
       all_qualified_hitters_max_season?: { Season: number; Hits_Max: number }[];
     };

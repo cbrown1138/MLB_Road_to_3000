@@ -13,23 +13,16 @@ import os
 import sys
 from datetime import date, datetime
 import statsapi as mlb
-# from sklearn.linear_model import LinearRegression
-# import numpy as np
-# import pandas as pd
-# import seaborn as sns
-# import matplotlib.pyplot as plt
 
+
+# FAILED [[110284, 117414, 118495, 119602, 121347, 123784, 124448], 117414, 118495, 119602, 121347, 123784, 124448]
 
 def fetch_player_stats(player_id: int) -> dict:
-    today = date.today()  # noqa: DTZ011
-    season = today.year
-    season_start_date = str(season)+'-01-01'
-    season_end_date = str(season+1)+'-12-31'
-
-
     ##########  career imports ##########
     career_data = mlb.player_stat_data(player_id, group="hitting", type="career")
     career_mlb_debut = career_data['mlb_debut']
+    career_mlb_final = career_data['last_played']
+
     career_gamesPlayed = career_data['stats'][0]['stats']['gamesPlayed']
     career_atBats = career_data['stats'][0]['stats']['atBats']
     career_hits = career_data['stats'][0]['stats']['hits']
@@ -48,26 +41,9 @@ def fetch_player_stats(player_id: int) -> dict:
 
 
 
-    ##########  season stats imports ##########
-    season_data = mlb.player_stat_data(player_id, group="hitting", type="season")
-    season_current_team = season_data['current_team']
-    season_current_team_id = mlb.lookup_team(season_current_team)[0]['id']
-
-    season_hits = season_data['stats'][0]['stats']['hits']
-    season_games_played = season_data['stats'][0]['stats']['gamesPlayed']
 
 
-    ##########  team schedule imports ##########
-    team_schedule = mlb.schedule(team=season_current_team_id, start_date=season_start_date, end_date=season_end_date)
-    # regular season only (schedule() also returns spring training/postseason if in range)
-    team_schedule = [g['game_date'] for g in team_schedule if g['game_type'] == 'R']
-    team_schedule = [datetime.strptime(d, '%Y-%m-%d').date() for d in team_schedule]
-    # get potential future game dates for next 60 years
-    temp = []
-    for each in range(1,59):
-        temp.extend([d.replace(year=season+each) for d in team_schedule])
-    team_schedule = team_schedule + temp
-    team_schedule = sorted(team_schedule)
+
 
 
     ##########  career games imports ##########
@@ -80,8 +56,11 @@ def fetch_player_stats(player_id: int) -> dict:
         return data['people'][0]['stats'][0]['splits']
 
     debut_year = int(career_mlb_debut[0:4])
+    # earliest game log is 1876
+    final_year = int(career_mlb_final[0:4])
+
     games_career_data = []
-    for each in range(debut_year, season + 1):
+    for each in range(debut_year, final_year+1):
         games_career_data.extend(get_game_log(each))
     games_career_data = sorted(games_career_data, key=lambda g: g['date'], reverse=True)
 
@@ -90,21 +69,16 @@ def fetch_player_stats(player_id: int) -> dict:
     games_15_data = games_career_data[:15]
 
 
-    ##########  calculate stats  ##########
-    remaining_hits = 3000 - career_hits
 
 
     ##########  calculate career ##########
     career_pace =  career_hits / career_gamesPlayed
-    career_pace_remaining = round(remaining_hits / career_pace)
     ## get career remaining date estimate
     #closest_game = min(team_schedule, key=lambda d: abs(d - today))
     #career_pace_remaining_date = team_schedule[team_schedule.index(closest_game)+career_pace_remaining]
 
 
     ##########  calculate season ##########
-    season_pace =  season_hits / season_games_played
-    season_pace_remaining = round(remaining_hits / season_pace)
     ## get season remaining date estimate
     #closest_game = min(team_schedule, key=lambda d: abs(d - today))
     #season_pace_remaining_date = team_schedule[team_schedule.index(closest_game)+season_pace_remaining]
@@ -113,7 +87,6 @@ def fetch_player_stats(player_id: int) -> dict:
     ##########  calculate 30 game ##########
     games30_hits = sum(g['stat']['hits'] for g in games_30_data)
     games30_pace =  games30_hits / 30
-    games30_pace_remaining = round(remaining_hits / games30_pace)
     ## get season remaining date estimate
     #closest_game = min(team_schedule, key=lambda d: abs(d - today))
     #games30_pace_remaining_date = team_schedule[team_schedule.index(closest_game)+games30_pace_remaining]
@@ -223,9 +196,6 @@ def fetch_player_stats(player_id: int) -> dict:
 
     # exports
     data = {
-        'today': today.strftime("%B %d, %Y"),
-        'season': season,
-
         'player_lastName': player_lastName,
         'player_fullName': player_fullName,
         'player_age': player_age,
@@ -234,27 +204,20 @@ def fetch_player_stats(player_id: int) -> dict:
         'player_birthCountry': player_birthCountry,
         'player_Position': player_Position,
 
-        'remaining_hits': remaining_hits,
 
         'career_mlb_debut': career_mlb_debut,
+        'career_mlb_final': career_mlb_final,
         'career_gamesPlayed': career_gamesPlayed,
         'career_atBats': career_atBats,
         'career_hits': career_hits,
         'career_avg': career_avg,
         'career_pace': career_pace,
-        'career_pace_remaining': career_pace_remaining,
      #   'career_pace_remaining_date': career_pace_remaining_date.strftime("%B %d, %Y"),
 
-        'season_current_team': season_current_team,
-        'season_hits': season_hits,
-        'season_games_played': season_games_played,
-        'season_pace': season_pace,
-        'season_pace_remaining': season_pace_remaining,
      #   'season_pace_remaining_date': season_pace_remaining_date.strftime("%B %d, %Y"),
 
         'games30_hits': games30_hits,
         'games30_pace': games30_pace,
-        'games30_pace_remaining': games30_pace_remaining,
      #   'games30_pace_remaining_date': games30_pace_remaining_date.strftime("%B %d, %Y"),
 
         'games15_hits': games15_hits,
@@ -289,7 +252,7 @@ def fetch_player_stats(player_id: int) -> dict:
 
 def save_local(data: dict) -> str:
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    fileName = os.path.join(script_dir, 'site', 'data', 'active', 'stats_'+data['player_lastName']+'.json')
+    fileName = os.path.join(script_dir, 'site', 'data', 'retired', 'stats_'+data['player_lastName']+'.json')
     with open(fileName, 'w') as f:
         json.dump(data, f, indent=2)
     return fileName
