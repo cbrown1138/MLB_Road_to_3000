@@ -46,11 +46,13 @@ export type PlayerSnapshot = {
   games15_pace: number;
 
   games_30_hits_max: number;
-  games_30_hits_max_date: string;
+  games_30_hits_max_date_end: string;
+  games_30_hits_max_date_start: string;
   games_30_hits_max_pace: number;
 
   games_30_hits_min: number;
-  games_30_hits_min_date: string;
+  games_30_hits_min_date_end: string;
+  games_30_hits_min_date_start: string;
   games_30_hits_min_pace: number;
 
   // Keyed by season (year as string); produced by data_player_get_stats.py.

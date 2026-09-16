@@ -1,23 +1,32 @@
 import type { PlayerSnapshot } from "@/lib/players";
 
+function formatDate(date: string): string {
+  const [year, month, day] = date.split("-");
+  return `${month}/${day}/${year}`;
+}
+
 function StreakCard({
   tone,
   label,
   hits,
-  date,
+  date_start,
+  date_end,
   pace,
 }: {
   tone: "hot" | "cold";
   label: string;
   hits: number;
-  date: string;
+  date_start: string;
+  date_end: string;
   pace: number;
 }) {
   const accent = tone === "hot" ? "text-emerald-400" : "text-red-300";
   const borderAccent =
     tone === "hot" ? "border-emerald-400" : "border-red-300";
-  const [year, month, day] = date.split("-");
-  const formattedDate = `${month}/${day}/${year}`;
+  const formattedDate =
+    date_start === date_end
+      ? formatDate(date_start)
+      : `${formatDate(date_start)} – ${formatDate(date_end)}`;
 
   return (
     <div
@@ -47,14 +56,16 @@ export function HotColdBand({ snapshot }: { snapshot: PlayerSnapshot }) {
           tone="hot"
           label="Hottest stretch"
           hits={snapshot.games_30_hits_max}
-          date={snapshot.games_30_hits_max_date}
+          date_start={snapshot.games_30_hits_max_date_start}
+          date_end={snapshot.games_30_hits_max_date_end}
           pace={snapshot.games_30_hits_max_pace}
         />
         <StreakCard
           tone="cold"
           label="Coldest stretch"
           hits={snapshot.games_30_hits_min}
-          date={snapshot.games_30_hits_min_date}
+          date_start={snapshot.games_30_hits_min_date_start}
+          date_end={snapshot.games_30_hits_min_date_end}
           pace={snapshot.games_30_hits_min_pace}
         />
       </div>

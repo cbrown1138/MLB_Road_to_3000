@@ -1,4 +1,9 @@
+"use client";
+
+import { useState } from "react";
 import type { PlayerSnapshot } from "@/lib/players";
+
+const COVID_SEASON = "2020";
 
 type Entry = { season: string; value: number };
 
@@ -226,17 +231,19 @@ function SeasonLineChart({
             )}
           </div>
 
-          {/* x-axis labels — mirror the flex layout above */}
-          <div className="mt-1 flex gap-1">
+          {/* x-axis labels — mirror the flex layout above. min-w-0 lets
+              labels shrink to fit the plot width instead of overflowing it
+              when a long career means many seasons. */}
+          <div className="mt-1 flex gap-0.5 sm:gap-1">
             {entries.map((e) => (
               <div
                 key={e.season}
-                className="flex min-w-[1.25rem] flex-1 flex-col items-center leading-tight"
+                className="flex min-w-0 flex-1 flex-col items-center overflow-hidden leading-tight"
               >
-                <span className="text-[10px] tabular-nums text-zinc-200">
+                <span className="text-[8px] tabular-nums text-zinc-200 sm:text-[10px]">
                   {e.value}
                 </span>
-                <span className="text-[10px] tabular-nums text-zinc-200">
+                <span className="text-[8px] tabular-nums text-zinc-200 sm:text-[10px]">
                   {`'${e.season.slice(-2)}`}
                 </span>
               </div>
@@ -262,10 +269,23 @@ export function SeasonCharts({
   leagueHitsMean?: Record<string, number>;
   leagueHitsMax?: Record<string, number>;
 }) {
-  const games = toEntries(snapshot.games_per_season);
-  const hits = toEntries(snapshot.hits_per_season);
+  const [includeCovidYear, setIncludeCovidYear] = useState(true);
 
-  if (games.length === 0 && hits.length === 0) return null;
+  const allGames = toEntries(snapshot.games_per_season);
+  const allHits = toEntries(snapshot.hits_per_season);
+
+  if (allGames.length === 0 && allHits.length === 0) return null;
+
+  const hasCovidYear =
+    allGames.some((e) => e.season === COVID_SEASON) ||
+    allHits.some((e) => e.season === COVID_SEASON);
+
+  const games = includeCovidYear
+    ? allGames
+    : allGames.filter((e) => e.season !== COVID_SEASON);
+  const hits = includeCovidYear
+    ? allHits
+    : allHits.filter((e) => e.season !== COVID_SEASON);
 
   const hitsTrends: TrendLine[] = [
     leagueHitsMean && {
@@ -303,6 +323,27 @@ export function SeasonCharts({
           />
         )}
       </div>
+
+      {hasCovidYear && (
+        <label className="mt-4 flex items-left justify-start gap-3 text-sm text-zinc-200">
+          <span>Include 2020 (shortened 60-game season)</span>
+          <button
+            type="button"
+            role="switch"
+            aria-checked={includeCovidYear}
+            onClick={() => setIncludeCovidYear((v) => !v)}
+            className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors ${
+              includeCovidYear ? "bg-emerald-500" : "bg-zinc-700"
+            }`}
+          >
+            <span
+              className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                includeCovidYear ? "translate-x-6" : "translate-x-1"
+              }`}
+            />
+          </button>
+        </label>
+      )}
     </section>
   );
 }

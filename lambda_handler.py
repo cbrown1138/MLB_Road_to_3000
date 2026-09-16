@@ -10,8 +10,8 @@ import os
 
 import boto3
 
-from data_player_get_stats import fetch_player_stats, save_s3
-from data_player_run_all import player_ids
+from data_processing.player_active_get_stats import fetch_player_stats, save_s3
+from data_processing.player_active import player_ids
 
 DATA_BUCKET = os.environ["DATA_BUCKET"]
 CODEBUILD_PROJECT = os.environ.get("CODEBUILD_PROJECT", "site-build")
