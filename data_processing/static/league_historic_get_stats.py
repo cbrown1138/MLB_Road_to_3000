@@ -25,7 +25,7 @@ def fetch_league_stats() -> dict:
     today = date.today()  # noqa: DTZ011
     season_current = today.year
     # loop all seasons in range
-    for season in range(2005,season_current+1):
+    for season in range(2005,season_current):
         # get leaders
         for league_name, league_id in leagues.items():
             # We use force=True to inject the explicit limit and leagueId parameters
@@ -79,8 +79,10 @@ def fetch_league_stats() -> dict:
 
 
 def save_local(data: dict) -> str:
+    # this file lives in data_processing/static/, so the repo root is two levels up
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    fileName = os.path.join(script_dir, 'site', 'data', 'league_stats'+'.json')
+    fileName = os.path.join(script_dir, '..', '..', 'site', 'data', 'stats_league.json')
+    os.makedirs(os.path.dirname(fileName), exist_ok=True)
     with open(fileName, 'w') as f:
         json.dump(data, f, indent=2)
     return fileName

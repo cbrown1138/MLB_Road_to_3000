@@ -20,7 +20,7 @@ def main():
 
     for player_id in player_ids:
         result = subprocess.run(
-            [sys.executable, "data_processing/player_active_get_stats.py", str(player_id)],
+            [sys.executable, "data_processing/daily/player_active_get_stats.py", str(player_id)],
             capture_output=True,
             text=True,
         )

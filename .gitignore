@@ -1,0 +1,5 @@
+.DS_Store
+__pycache__/
+*.pyc
+AWS_DEPLOYMENT_PLAN.html
+AWS_DEPLOYMENT_PLAN_files/

@@ -1,5 +1,7 @@
 # AWS Deployment Plan — `site` on S3 + Daily Lambda Data Refresh
 
+> **Note (Sept 2026):** this plan predates the `data_processing/` restructure and uses the original `mlb-r3k-*` resource names. Current reality: real resources are `roadto3000-*`; the daily job runs `data_processing/daily/` (`player_active_get_stats.py` per player + `league_active_get_stats.py`) via `lambda_handler.py`; S3 data keys are `stats_<Last><First>.json` and `stats_league.json` (not `latest_stats_<Last>.json`); the Dockerfile copies only `data_processing/daily/`; and CodeBuild syncs into `site/data/active/`. References below to `data_player_run_all.py` / `data_player_get_stats.py` mean those scripts.
+
 Scoped to: (1) hosting the built [site](site) Next.js app on S3 at **`roadto3000.click`** (AWS account region **`us-east-2`**), and (2) a daily Lambda job that runs [data_player_run_all.py](data_player_run_all.py) → [data_player_get_stats.py](data_player_get_stats.py) to refresh the player JSON and get the new numbers live, on a schedule of **6:00 AM America/Chicago**.
 
 ## 0. Key Constraint: This Is a Statically Generated Site

@@ -14,17 +14,26 @@ Only 33 batters in MLB history have reached 3,000 career hits. This project trac
 - **Hot/cold band** — the best and worst 30-game rolling stretches of the player's career, with hits and the date each stretch ended.
 - **Footer** — "data last updated" timestamp, sourced from the newest snapshot.
 
-Currently tracked: Jose Altuve, Mookie Betts, Freddie Freeman, Manny Machado ([data_player_run_all.py](data_player_run_all.py)).
+Currently tracked: Jose Altuve, Mookie Betts, Freddie Freeman, Manny Machado, Mike Trout, Bryce Harper, Juan Soto, Jose Ramirez, Francisco Lindor, Xander Bogaerts ([player_active.py](data_processing/daily/player_active.py)).
 
 ## Data pipeline
 
-[data_player_run_all.py](data_player_run_all.py) runs [data_player_get_stats.py](data_player_get_stats.py) once per player (by MLB Stats API player ID). Each run pulls from `statsapi.mlb.com` — career hitting totals, current-season hitting totals, and full career game logs — computes the derived stats below, and writes one file:
+Scripts live in [data_processing/](data_processing), split by how often they run:
+
+- **[daily/](data_processing/daily)** — everything here runs every day in AWS Lambda ([lambda_handler.py](lambda_handler.py)). Nothing else is packaged into the Lambda image.
+  - [player_active.py](data_processing/daily/player_active.py) holds the tracked player IDs; [player_active_get_stats.py](data_processing/daily/player_active_get_stats.py) pulls each player's career totals, current-season totals, and full career game logs from `statsapi.mlb.com` and computes the derived stats below.
+  - [league_active_get_stats.py](data_processing/daily/league_active_get_stats.py) adds the current season's league mean/max hits to `stats_league.json`, merging into the existing history.
+- **[static/](data_processing/static)** — run by hand, output committed to git: retired 3,000-hit-club players ([player_club.py](data_processing/static/player_club.py) → `site/data/club/`) and historic league stats.
+
+Locally each script saves under `site/data/`; in Lambda (`DATA_BUCKET` set) it writes to S3 instead, and CodeBuild syncs the bucket into `site/data/` at build time:
 
 ```
-site/data/latest_stats_<LastName>.json
+site/data/active/stats_<LastName><FirstName>.json   # one per active player
+site/data/stats_league.json                          # league mean/max hits per season
+site/data/club/stats_<LastName><FirstName>.json      # static, committed only
 ```
 
-[site/lib/players.ts](site/lib/players.ts) reads every `latest_stats_*.json` in that folder at build time — the Next.js site itself never calls the MLB API directly.
+[site/lib/players.ts](site/lib/players.ts) reads `site/data/active/stats_*.json` at build time — the Next.js site itself never calls the MLB API directly.
 
 ### JSON schema
 
@@ -32,7 +41,7 @@ site/data/latest_stats_<LastName>.json
 |---|---|
 | `today` | Date the snapshot was generated |
 | `season` | Current MLB season year |
-| `player_lastName`, `player_fullName` | Player identity; `lastName` also drives the URL slug and the JSON filename |
+| `player_firstName`, `player_lastName`, `player_fullName` | Player identity (accents stripped); `lastName` drives the URL slug, `lastName` + `firstName` the JSON filename |
 | `player_age`, `player_birthDate`, `player_birthCity`, `player_birthCountry` | Bio fields |
 | `player_Position` | Primary position abbreviation |
 | `remaining_hits` | `3000 - career_hits` |
@@ -44,8 +53,9 @@ site/data/latest_stats_<LastName>.json
 | `season_hits`, `season_games_played`, `season_pace`, `season_pace_remaining` | Same shape, scoped to the current season |
 | `games30_hits`, `games30_pace`, `games30_pace_remaining` | Trailing 30-game rolling window |
 | `games15_hits`, `games15_pace` | Trailing 15-game rolling window |
-| `games_30_hits_max`, `games_30_hits_max_date`, `games_30_hits_max_pace` | Best 30-game rolling window across the player's entire career, and when it ended |
-| `games_30_hits_min`, `games_30_hits_min_date`, `games_30_hits_min_pace` | Worst 30-game rolling window across the player's entire career, and when it ended |
+| `games_30_hits_max`, `games_30_hits_max_date_start`, `games_30_hits_max_date_end`, `games_30_hits_max_pace` | Best 30-game rolling window across the player's entire career, and when it started/ended |
+| `games_30_hits_min`, `games_30_hits_min_date_start`, `games_30_hits_min_date_end`, `games_30_hits_min_pace` | Worst 30-game rolling window across the player's entire career, and when it started/ended |
+| `games_per_season`, `hits_per_season` | Career games and hits keyed by season year |
 
 The canonical type is [`PlayerSnapshot`](site/lib/players.ts) — if the Python job's field names ever drift from this table, that's the type to check first.
 
@@ -60,8 +70,9 @@ The canonical type is [`PlayerSnapshot`](site/lib/players.ts) — if the Python 
 ## Local development
 
 ```bash
-# refresh player data (requires `statsapi` installed)
-python data_player_run_all.py
+# refresh player data (requires `statsapi` installed; run from the repo root)
+python data_processing/daily/player_active.py
+python data_processing/daily/league_active_get_stats.py
 
 # run the site
 cd site
@@ -71,6 +82,4 @@ npm run dev
 
 ## Docs
 
-- [PROJECT_PLAN.md](PROJECT_PLAN.md) — data sources, metrics, and hosting options
-- [WEBAPP_PLAN.md](WEBAPP_PLAN.md) — frontend component breakdown
 - [AWS_DEPLOYMENT_PLAN.md](AWS_DEPLOYMENT_PLAN.md) — S3 hosting + daily Lambda data refresh plan

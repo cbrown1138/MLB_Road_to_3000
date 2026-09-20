@@ -1,8 +1,8 @@
 import { readFileSync, readdirSync } from "fs";
 import path from "path";
 
-// Player JSON snapshots are produced by ../data_player_get_stats.py (one file
-// per player) and read directly from site/data — no copy step.
+// Player JSON snapshots are produced by ../data_processing/daily/player_active_get_stats.py
+// (one file per player, saved or synced into site/data/active) — no copy step.
 const DATA_DIR = path.join(process.cwd(), "data", "active");
 const FILE_PATTERN = /^stats_(.+)\.json$/;
 const MILESTONE = 3000;
@@ -55,7 +55,7 @@ export type PlayerSnapshot = {
   games_30_hits_min_date_start: string;
   games_30_hits_min_pace: number;
 
-  // Keyed by season (year as string); produced by data_player_get_stats.py.
+  // Keyed by season (year as string); produced by player_active_get_stats.py.
   games_per_season?: Record<string, number>;
   hits_per_season?: Record<string, number>;
 };
@@ -122,7 +122,7 @@ export function getLastUpdated(): string {
 }
 
 // League-wide hits per season for qualified hitters, produced by
-// ../data_league_get_stats.py. Keyed by season (year as string).
+// ../data_processing/daily/league_active_get_stats.py. Keyed by season (year as string).
 export function getLeagueHitsMeanBySeason(): Record<string, number> {
   try {
     const raw = readFileSync(LEAGUE_STATS_PATH, "utf-8");
@@ -137,7 +137,7 @@ export function getLeagueHitsMeanBySeason(): Record<string, number> {
 }
 
 // League-wide max hits per season among qualified hitters, produced by
-// ../data_league_get_stats.py. Keyed by season (year as string).
+// ../data_processing/daily/league_active_get_stats.py. Keyed by season (year as string).
 export function getLeagueHitsMaxBySeason(): Record<string, number> {
   try {
     const raw = readFileSync(LEAGUE_STATS_PATH, "utf-8");

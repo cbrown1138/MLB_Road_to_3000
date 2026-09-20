@@ -168,15 +168,15 @@ def fetch_player_stats(player_id: int) -> dict:
     ##########  calculate games per season ##########
     games_per_season = {}
     for g in games_career_data:
-        season = g['season']
-        games_per_season[season] = games_per_season.get(season, 0) + 1
+        g_season = g['season']
+        games_per_season[g_season] = games_per_season.get(g_season, 0) + 1
     games_per_season = dict(reversed(games_per_season.items()))
 
     ##########  calculate hits per season ##########
     hits_per_season = {}
     for g in games_career_data:
-        season = g['season']
-        hits_per_season[season] = sum([g['stat']['hits'] for g in games_career_data if g['season'] == season])
+        g_season = g['season']
+        hits_per_season[g_season] = sum([g['stat']['hits'] for g in games_career_data if g['season'] == g_season])
     hits_per_season = dict(reversed(hits_per_season.items()))
 
 
