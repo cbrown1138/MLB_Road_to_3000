@@ -14,12 +14,12 @@ export default function Home() {
         </h1>
         <br/>
         <p className="max-w-2xl text-zinc-200 text-center">
-          Only 33 batters in Major League Baseball have achived 3,000 career hits.
-          A unique combination of skill, consistency and longevity make this one of sports toughest milestones.          
+          Only 33 batters in Major League Baseball have achieved 3,000 career hits. 
+          A unique combination of skill, consistency, and longevity makes this one of sports' toughest milestones. 
         </p>
         <p className="max-w-2xl text-zinc-200 text-center">
-          Follow the few who have a chance to reach this milestone in the upcoming seasons. 
-          Watch their career pace, recent hot and cold stretches, and more! <br/>
+          Follow the few who have a chance to reach this mark in the upcoming seasons. 
+          Watch their career pace, recent hot and cold streaks, and more! <br/>
         </p>
       </header>
 

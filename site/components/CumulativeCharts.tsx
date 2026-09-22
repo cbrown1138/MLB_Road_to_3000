@@ -254,7 +254,7 @@ export function CumulativeCharts({
       )}
       <div className="rounded-xl bg-emerald-900 p-5 shadow-sm ring-1 ring-zinc-800">
         <p className="mb-2 text-sm font-medium uppercase tracking-wide text-zinc-200">
-          Career hits by season
+          Cumulative hits by season
         </p>
         <div className="relative" style={{ height: CHART_HEIGHT }}>
           <canvas

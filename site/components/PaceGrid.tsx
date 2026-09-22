@@ -58,7 +58,7 @@ export function PaceGrid({ snapshot }: { snapshot: PlayerSnapshot }) {
       pace: snapshot.career_pace,
     },
     {
-      label: `current season pace`,
+      label: "Current season pace",
       hits: snapshot.season_hits,
       gamesPlayed: snapshot.season_games_played,
       pace: snapshot.season_pace,

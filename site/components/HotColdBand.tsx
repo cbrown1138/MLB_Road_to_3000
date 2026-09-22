@@ -49,12 +49,12 @@ export function HotColdBand({ snapshot }: { snapshot: PlayerSnapshot }) {
   return (
     <section className="w-full max-w-5xl">
       <h2 className="mb-3 text-lg font-semibold text-zinc-200">
-        Best &amp; worst 30-game stretches
+        Best &amp; worst 30-game streak
       </h2>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <StreakCard
           tone="hot"
-          label="Hottest stretch"
+          label="Hottest streak"
           hits={snapshot.games_30_hits_max}
           date_start={snapshot.games_30_hits_max_date_start}
           date_end={snapshot.games_30_hits_max_date_end}
@@ -62,7 +62,7 @@ export function HotColdBand({ snapshot }: { snapshot: PlayerSnapshot }) {
         />
         <StreakCard
           tone="cold"
-          label="Coldest stretch"
+          label="Coldest streak"
           hits={snapshot.games_30_hits_min}
           date_start={snapshot.games_30_hits_min_date_start}
           date_end={snapshot.games_30_hits_min_date_end}
