@@ -6,6 +6,7 @@ import {
   getMilestone,
   getLeagueHitsMeanBySeason,
   getLeagueHitsMaxBySeason,
+  getAllClubCumulative,
   slugify,
 } from "@/lib/players";
 import { PlayerHeader } from "@/components/PlayerHeader";
@@ -13,6 +14,10 @@ import { HeroCounter } from "@/components/HeroCounter";
 import { PaceGrid } from "@/components/PaceGrid";
 import { HotColdBand } from "@/components/HotColdBand";
 import { SeasonCharts } from "@/components/SeasonCharts";
+import { CumulativeCharts } from "@/components/CumulativeCharts";
+
+// Default 3,000-hit club comparison on every player's cumulative chart.
+const DEFAULT_CLUB_COMPARISON = "BiggioCraig";
 
 export function generateStaticParams() {
   return getAllPlayers().map((player) => ({
@@ -53,6 +58,11 @@ export default async function PlayerPage({
         snapshot={snapshot}
         leagueHitsMean={getLeagueHitsMeanBySeason()}
         leagueHitsMax={getLeagueHitsMaxBySeason()}
+      />
+      <CumulativeCharts
+        snapshot={snapshot}
+        clubPlayers={getAllClubCumulative()}
+        defaultClubKey={DEFAULT_CLUB_COMPARISON}
       />
     </div>
   );

@@ -179,7 +179,15 @@ def fetch_player_stats(player_id: int) -> dict:
         hits_per_season[g_season] = sum([g['stat']['hits'] for g in games_career_data if g['season'] == g_season])
     hits_per_season = dict(reversed(hits_per_season.items()))
 
+    ##########  calculate hits season cumulative ##########
+    hits_season_cumulative = {}
+    running_sum = 0
 
+    for key, value in hits_per_season.items():
+        running_sum += value
+        hits_season_cumulative[key] = running_sum
+
+# Output: {'a': 10, 'b': 30, 'c': 45, 'd': 50}
 
 
 
@@ -285,6 +293,7 @@ def fetch_player_stats(player_id: int) -> dict:
     # add dict
     data['games_per_season'] = games_per_season
     data['hits_per_season'] = hits_per_season
+    data['hits_season_cumulative'] = hits_season_cumulative
 
 
     # clean accents names
@@ -296,7 +305,7 @@ def fetch_player_stats(player_id: int) -> dict:
 
 def save_local(data: dict) -> str:
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    fileName = os.path.join(script_dir, '..', 'site', 'data', 'active', 'stats_'+data['player_lastName']+data['player_firstName']+'.json')
+    fileName = os.path.join(script_dir, '..', '..', 'site', 'data', 'active', 'stats_'+data['player_lastName']+data['player_firstName']+'.json')
     os.makedirs(os.path.dirname(fileName), exist_ok=True)
     with open(fileName, 'w') as f:
         json.dump(data, f, indent=2)

@@ -58,6 +58,7 @@ export type PlayerSnapshot = {
   // Keyed by season (year as string); produced by player_active_get_stats.py.
   games_per_season?: Record<string, number>;
   hits_per_season?: Record<string, number>;
+  hits_season_cumulative?: Record<string, number>;
 };
 
 export function slugify(lastName: string): string {
@@ -148,5 +149,41 @@ export function getLeagueHitsMaxBySeason(): Record<string, number> {
     return Object.fromEntries(rows.map((r) => [String(r.Season), r.Hits_Max]));
   } catch {
     return {};
+  }
+}
+
+// Retired 3,000-hit club members, produced by
+// ../data_processing/static/player_club_get_stats.py.
+const CLUB_DATA_DIR = path.join(process.cwd(), "data", "club");
+
+export type ClubCumulative = {
+  // File key from stats_<key>.json, e.g. "BiggioCraig".
+  key: string;
+  player_fullName: string;
+  hits_season_cumulative: Record<string, number>;
+};
+
+// Career cumulative hits by season for every club member, sorted by last name.
+export function getAllClubCumulative(): ClubCumulative[] {
+  try {
+    return readdirSync(CLUB_DATA_DIR)
+      .map((f) => f.match(FILE_PATTERN)?.[1])
+      .filter((key): key is string => Boolean(key))
+      .map((key) => {
+        const parsed = JSON.parse(
+          readFileSync(path.join(CLUB_DATA_DIR, `stats_${key}.json`), "utf-8"),
+        ) as Partial<ClubCumulative>;
+        if (!parsed.player_fullName || !parsed.hits_season_cumulative) return undefined;
+        return {
+          key,
+          player_fullName: parsed.player_fullName,
+          hits_season_cumulative: parsed.hits_season_cumulative,
+        };
+      })
+      .filter((c): c is ClubCumulative => Boolean(c))
+      // Keys are LastFirst, so this sorts by last name.
+      .sort((a, b) => a.key.localeCompare(b.key));
+  } catch {
+    return [];
   }
 }
