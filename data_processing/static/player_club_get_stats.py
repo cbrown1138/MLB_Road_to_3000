@@ -16,8 +16,6 @@ from datetime import date, datetime
 import statsapi as mlb
 
 
-# FAILED [[110284, 117414, 118495, 119602, 121347, 123784, 124448], 117414, 118495, 119602, 121347, 123784, 124448]
-
 def fetch_player_stats(player_id: int) -> dict:
     ##########  career imports ##########
     career_data = mlb.player_stat_data(player_id, group="hitting", type="career")
@@ -28,7 +26,6 @@ def fetch_player_stats(player_id: int) -> dict:
     career_atBats = career_data['stats'][0]['stats']['atBats']
     career_hits = career_data['stats'][0]['stats']['hits']
     career_avg = career_data['stats'][0]['stats']['avg']
-
 
     ##########  bio imports ##########
     player_data = mlb.get('people', {'personIds': player_id})
@@ -41,13 +38,6 @@ def fetch_player_stats(player_id: int) -> dict:
     player_birthCountry = player_data["people"][0]["birthCountry"]
     player_Position = player_data["people"][0]["primaryPosition"]['abbreviation']
 
-
-
-
-
-
-
-
     ##########  career games imports ##########
     # get all career games
     def get_game_log(season):
@@ -55,14 +45,28 @@ def fetch_player_stats(player_id: int) -> dict:
             'personIds': player_id,
             'hydrate': f'stats(group=[hitting],type=[gameLog],season={season})'
         })
-        return data['people'][0]['stats'][0]['splits']
+        # seasons with no games (military service, injury, suspension) have no 'stats' key
+        stats = data['people'][0].get('stats', [])
+        return stats[0]['splits'] if stats else []
 
-    debut_year = int(career_mlb_debut[0:4])
-    # earliest game log is 1876
-    final_year = int(career_mlb_final[0:4])
+    # season totals come from yearByYear, not game logs: the API has no game logs
+    # before 1901 (Cap Anson has none; Lajoie and Wagner are missing early seasons).
+    # A season split across teams has one row per team plus a combined row with
+    # numTeams, so prefer the combined row.
+    year_by_year = mlb.get('people', {
+        'personIds': player_id,
+        'hydrate': 'stats(group=[hitting],type=[yearByYear])'
+    })
+    season_rows = {}
+    for s in year_by_year['people'][0]['stats'][0]['splits']:
+        if s['season'] not in season_rows or 'numTeams' in s:
+            season_rows[s['season']] = s
+    # only seasons actually played, not every year from debut to final game:
+    # careers have gap years, and some (e.g. Cap Anson) have no last_played date.
+    seasons_played = sorted(season_rows, key=int)
 
     games_career_data = []
-    for each in range(debut_year, final_year+1):
+    for each in seasons_played:
         games_career_data.extend(get_game_log(each))
     games_career_data = sorted(games_career_data, key=lambda g: g['date'], reverse=True)
 
@@ -70,84 +74,54 @@ def fetch_player_stats(player_id: int) -> dict:
     games_30_data = games_career_data[:30]
     games_15_data = games_career_data[:15]
 
-
-
-
     ##########  calculate career ##########
     career_pace =  career_hits / career_gamesPlayed
-    ## get career remaining date estimate
-    #closest_game = min(team_schedule, key=lambda d: abs(d - today))
-    #career_pace_remaining_date = team_schedule[team_schedule.index(closest_game)+career_pace_remaining]
 
-
-    ##########  calculate season ##########
-    ## get season remaining date estimate
-    #closest_game = min(team_schedule, key=lambda d: abs(d - today))
-    #season_pace_remaining_date = team_schedule[team_schedule.index(closest_game)+season_pace_remaining]
-
+    # game-log stats (last 30/15, streaks) are only meaningful when the logs cover
+    # the whole career; otherwise leave them null
+    game_logs_complete = len(games_career_data) == career_gamesPlayed
 
     ##########  calculate 30 game ##########
     games30_hits = sum(g['stat']['hits'] for g in games_30_data)
     games30_pace =  games30_hits / 30
-    ## get season remaining date estimate
-    #closest_game = min(team_schedule, key=lambda d: abs(d - today))
-    #games30_pace_remaining_date = team_schedule[team_schedule.index(closest_game)+games30_pace_remaining]
 
 
     ##########  calculate 15 game ##########
     games15_hits = sum(g['stat']['hits'] for g in games_15_data)
     games15_pace =  games15_hits / 15
-    #games15_pace_remaining = round(remaining_hits / games15_pace)
-    ## get season remaining date estimate
-    #closest_game = min(team_schedule, key=lambda d: abs(d - today))
-    #games15_pace_remaining_date = team_schedule[team_schedule.index(closest_game)+games15_pace_remaining]
 
+    if not game_logs_complete:
+        games30_hits = games30_pace = games15_hits = games15_pace = None
 
     ##########  calculate best and worst 30 game streak ##########
     games_count = len(games_career_data)
     rolling = []
-    for i in range(1,games_count-30):
-        games_in_window = games_career_data[i-1:i+29]
+    # games are newest-first, so window games_career_data[i:i+30] ends at i
+    for i in range(games_count-29):
+        games_in_window = games_career_data[i:i+30]
         rolling.append({
-            'date': games_career_data[i-1]['date'],
+            'date': games_in_window[0]['date'],
             'hits_rolling_30': sum(g['stat']['hits'] for g in games_in_window)
         })
 
-    best = max(rolling, key=lambda r: r['hits_rolling_30'])
-    games_30_hits_max = best['hits_rolling_30']
-    games_30_hits_max_pace = games_30_hits_max / 30
-    games_30_hits_max_date = best['date']
+    games_30_hits_max = games_30_hits_max_pace = games_30_hits_max_date = None
+    games_30_hits_min = games_30_hits_min_pace = games_30_hits_min_date = None
+    if game_logs_complete and rolling:
+        best = max(rolling, key=lambda r: r['hits_rolling_30'])
+        games_30_hits_max = best['hits_rolling_30']
+        games_30_hits_max_pace = games_30_hits_max / 30
+        games_30_hits_max_date = best['date']
 
-    worst = min(rolling, key=lambda r: r['hits_rolling_30'])
-    games_30_hits_min = worst['hits_rolling_30']
-    games_30_hits_min_pace = games_30_hits_min / 30
-    games_30_hits_min_date = worst['date']
-
-    ### max
-    # games_30_hits_max_pace_remaining = round(remaining_hits / games_30_hits_max_pace)
-    ## get season remaining date estimate
-    #closest_game = min(team_schedule, key=lambda d: abs(d - today))
-    #games_30_hits_max_pace_remaining_date = team_schedule[team_schedule.index(closest_game)+games_30_hits_max_pace_remaining]
-
-    ### min
-    # games_30_hits_min_pace_remaining = round(remaining_hits / games_30_hits_min_pace)
-    ## get season remaining date estimate
-    #closest_game = min(team_schedule, key=lambda d: abs(d - today))
-    #games_30_hits_min_pace_remaining_date = team_schedule[team_schedule.index(closest_game)+games_30_hits_min_pace_remaining]
+        worst = min(rolling, key=lambda r: r['hits_rolling_30'])
+        games_30_hits_min = worst['hits_rolling_30']
+        games_30_hits_min_pace = games_30_hits_min / 30
+        games_30_hits_min_date = worst['date']
 
     ##########  calculate games per season ##########
-    games_per_season = {}
-    for g in games_career_data:
-        season = g['season']
-        games_per_season[season] = games_per_season.get(season, 0) + 1
-    games_per_season = dict(reversed(games_per_season.items()))
+    games_per_season = {season: season_rows[season]['stat']['gamesPlayed'] for season in seasons_played}
 
     ##########  calculate hits per season ##########
-    hits_per_season = {}
-    for g in games_career_data:
-        season = g['season']
-        hits_per_season[season] = sum([g['stat']['hits'] for g in games_career_data if g['season'] == season])
-    hits_per_season = dict(reversed(hits_per_season.items()))
+    hits_per_season = {season: season_rows[season]['stat']['hits'] for season in seasons_played}
 
     ##########  calculate hits season cumulative ##########
     hits_season_cumulative = {}
@@ -156,51 +130,6 @@ def fetch_player_stats(player_id: int) -> dict:
     for key, value in hits_per_season.items():
         running_sum += value
         hits_season_cumulative[key] = running_sum
-
-
-
-
-    ##########  predict games per season in future ##########
-
-
-
-    ##########  calculate current pace ##########
-    # rolling = []
-    # idx_first = 0
-    # idx_last = 50
-    # for i in range(1,int(games_count/50)+1):
-    #     games_in_window = games_career_data[idx_first:idx_last]
-    #     rolling.append({
-    #         'date': games_in_window[-1]['date'],
-    #         'hits_50': sum(g['stat']['hits'] for g in games_in_window)
-    #     })
-    #     idx_first = idx_first + 50
-    #     idx_last = idx_last + 50
-
-
-
-    # # Load, convert to DataFrame, and sort
-    # games_50_hits = pd.DataFrame(rolling)
-
-    # games_50_hits = games_50_hits.sort_values('date')
-    # games_50_hits.reset_index(inplace=True)
-    # games_50_hits['peroid'] = games_50_hits.index
-
-
-    # # Build the chart
-    # plt.figure(figsize=(10, 6))
-    # sns.barplot(x='peroid', y='hits_50', data=games_50_hits, color='royalblue')
-
-    # plt.xticks(rotation=45)
-    # plt.tight_layout()
-    # plt.show()
-
-
-
-
-    # also need to estimate games per season played, that goes into predicive future date
-    # maybe just use league avg for games played a season for player age?
-
 
     # exports
     data = {
@@ -213,7 +142,6 @@ def fetch_player_stats(player_id: int) -> dict:
         'player_birthCountry': player_birthCountry,
         'player_Position': player_Position,
 
-
         'career_mlb_debut': career_mlb_debut,
         'career_mlb_final': career_mlb_final,
         'career_gamesPlayed': career_gamesPlayed,
@@ -221,37 +149,26 @@ def fetch_player_stats(player_id: int) -> dict:
         'career_hits': career_hits,
         'career_avg': career_avg,
         'career_pace': career_pace,
-     #   'career_pace_remaining_date': career_pace_remaining_date.strftime("%B %d, %Y"),
-
-     #   'season_pace_remaining_date': season_pace_remaining_date.strftime("%B %d, %Y"),
 
         'games30_hits': games30_hits,
         'games30_pace': games30_pace,
-     #   'games30_pace_remaining_date': games30_pace_remaining_date.strftime("%B %d, %Y"),
 
         'games15_hits': games15_hits,
         'games15_pace': games15_pace,
-     #   'games15_pace_remaining': games15_pace_remaining,
-     #   'games15_pace_remaining_date': games15_pace_remaining_date.strftime("%B %d, %Y"),
 
         'games_30_hits_max': games_30_hits_max,
         'games_30_hits_max_date': games_30_hits_max_date,
         'games_30_hits_max_pace': games_30_hits_max_pace,
-     #   'games_30_hits_max_pace_remaining_date': games_30_hits_max_pace_remaining_date.strftime("%B %d, %Y"),
 
         'games_30_hits_min': games_30_hits_min,
         'games_30_hits_min_date': games_30_hits_min_date,
         'games_30_hits_min_pace': games_30_hits_min_pace,
-     #   'games_30_hits_min_pace_remaining_date': games_30_hits_min_pace_remaining_date.strftime("%B %d, %Y"),
-
     }
 
     # add dict
     data['games_per_season'] = games_per_season
     data['hits_per_season'] = hits_per_season
     data['hits_season_cumulative'] = hits_season_cumulative
-
-
 
     # clean accents names
     for key in ['player_firstName','player_lastName','player_fullName','player_birthCity','player_birthCountry']:

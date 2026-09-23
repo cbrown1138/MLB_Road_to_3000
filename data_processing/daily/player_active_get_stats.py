@@ -3,7 +3,7 @@ Created on Thu Apr  9 21:54:19 2026
 
 @author: christopherbrown
 
-Get individual MLB player stats for Road to 3000
+Get individual MLB player stats for Road to 3000, 3000 club members
 
 Future will add predictions and season charts by hits and games
 
@@ -24,8 +24,8 @@ import statsapi as mlb
 def fetch_player_stats(player_id: int) -> dict:
     today = date.today()  # noqa: DTZ011
     season = today.year
-    season_start_date = str(season)+'-01-01'
-    season_end_date = str(season+1)+'-12-31'
+    # season_start_date = str(season)+'-01-01'
+    # season_end_date = str(season+1)+'-12-31'
 
 
     ##########  career imports ##########
@@ -53,23 +53,23 @@ def fetch_player_stats(player_id: int) -> dict:
     ##########  season stats imports ##########
     season_data = mlb.player_stat_data(player_id, group="hitting", type="season")
     season_current_team = season_data['current_team']
-    season_current_team_id = mlb.lookup_team(season_current_team)[0]['id']
+    # season_current_team_id = mlb.lookup_team(season_current_team)[0]['id']
 
     season_hits = season_data['stats'][0]['stats']['hits']
     season_games_played = season_data['stats'][0]['stats']['gamesPlayed']
 
 
-    ##########  team schedule imports ##########
-    team_schedule = mlb.schedule(team=season_current_team_id, start_date=season_start_date, end_date=season_end_date)
-    # regular season only (schedule() also returns spring training/postseason if in range)
-    team_schedule = [g['game_date'] for g in team_schedule if g['game_type'] == 'R']
-    team_schedule = [datetime.strptime(d, '%Y-%m-%d').date() for d in team_schedule]
-    # get potential future game dates for next 60 years
-    temp = []
-    for each in range(1,59):
-        temp.extend([d.replace(year=season+each) for d in team_schedule])
-    team_schedule = team_schedule + temp
-    team_schedule = sorted(team_schedule)
+    # ##########  team schedule imports ##########
+    # team_schedule = mlb.schedule(team=season_current_team_id, start_date=season_start_date, end_date=season_end_date)
+    # # regular season only (schedule() also returns spring training/postseason if in range)
+    # team_schedule = [g['game_date'] for g in team_schedule if g['game_type'] == 'R']
+    # team_schedule = [datetime.strptime(d, '%Y-%m-%d').date() for d in team_schedule]
+    # # get potential future game dates for next 60 years
+    # temp = []
+    # for each in range(1,59):
+    #     temp.extend([d.replace(year=season+each) for d in team_schedule])
+    # team_schedule = team_schedule + temp
+    # team_schedule = sorted(team_schedule)
 
 
     ##########  career games imports ##########
@@ -133,24 +133,26 @@ def fetch_player_stats(player_id: int) -> dict:
     ##########  calculate best and worst 30 game streak ##########
     games_count = len(games_career_data)
     rolling = []
-    for i in range(1,games_count-30):
-        games_in_window = games_career_data[i-1:i+29]
+    # games are newest-first, so window games_career_data[i:i+30] ends at i and starts at i+29
+    for i in range(games_count-29):
+        games_in_window = games_career_data[i:i+30]
         rolling.append({
-            'date': games_career_data[i-1]['date'],
+            'date_end': games_in_window[0]['date'],
+            'date_start': games_in_window[-1]['date'],
             'hits_rolling_30': sum(g['stat']['hits'] for g in games_in_window)
         })
 
     best = max(rolling, key=lambda r: r['hits_rolling_30'])
     games_30_hits_max = best['hits_rolling_30']
     games_30_hits_max_pace = games_30_hits_max / 30
-    games_30_hits_max_date_end = best['date']
-    games_30_hits_max_date_start = games_career_data[rolling.index(best)+30]['date']
+    games_30_hits_max_date_end = best['date_end']
+    games_30_hits_max_date_start = best['date_start']
 
     worst = min(rolling, key=lambda r: r['hits_rolling_30'])
     games_30_hits_min = worst['hits_rolling_30']
     games_30_hits_min_pace = games_30_hits_min / 30
-    games_30_hits_min_date_end = worst['date']
-    games_30_hits_min_date_start = games_career_data[rolling.index(worst)+30]['date']
+    games_30_hits_min_date_end = worst['date_end']
+    games_30_hits_min_date_start = worst['date_start']
 
 
     ### max
