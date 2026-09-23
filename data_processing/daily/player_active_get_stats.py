@@ -13,6 +13,7 @@ import os
 import sys
 import unicodedata
 from datetime import date, datetime
+from zoneinfo import ZoneInfo
 import statsapi as mlb
 # from sklearn.linear_model import LinearRegression
 # import numpy as np
@@ -20,9 +21,17 @@ import statsapi as mlb
 # import seaborn as sns
 # import matplotlib.pyplot as plt
 
+# The pipeline runs in UTC (Lambda), but "today" should be the site's local
+# date: an evening Central run would otherwise stamp tomorrow's date.
+SITE_TZ = ZoneInfo('America/Chicago')
+
+
+def local_today() -> date:
+    return datetime.now(SITE_TZ).date()
+
 
 def fetch_player_stats(player_id: int) -> dict:
-    today = date.today()  # noqa: DTZ011
+    today = local_today()
     season = today.year
     # season_start_date = str(season)+'-01-01'
     # season_end_date = str(season+1)+'-12-31'
@@ -319,7 +328,7 @@ def save_s3(data: dict, bucket: str) -> None:
     s3 = boto3.client('s3')
     body = json.dumps(data, indent=2).encode('utf-8')
     latest_key = 'stats_'+data['player_lastName']+data['player_firstName']+'.json'
-    history_key = 'history/'+date.today().isoformat()+'/'+latest_key
+    history_key = 'history/'+local_today().isoformat()+'/'+latest_key
     s3.put_object(Bucket=bucket, Key=latest_key, Body=body, ContentType='application/json')
     s3.put_object(Bucket=bucket, Key=history_key, Body=body, ContentType='application/json')
 

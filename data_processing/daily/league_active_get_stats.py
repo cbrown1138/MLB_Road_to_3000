@@ -12,7 +12,16 @@ import os
 import sys
 from statistics import mean
 from datetime import date, datetime
+from zoneinfo import ZoneInfo
 import statsapi as mlb
+
+# The pipeline runs in UTC (Lambda), but "today" should be the site's local
+# date: an evening Central run would otherwise stamp tomorrow's date.
+SITE_TZ = ZoneInfo('America/Chicago')
+
+
+def local_today() -> date:
+    return datetime.now(SITE_TZ).date()
 
 
 def fetch_league_stats() -> dict:
@@ -22,7 +31,7 @@ def fetch_league_stats() -> dict:
     all_qualified_hitters_mean_season = []
     all_qualified_hitters_max_season = []
 
-    today = date.today()  # noqa: DTZ011
+    today = local_today()
     season = today.year
     for league_name, league_id in leagues.items():
         # We use force=True to inject the explicit limit and leagueId parameters
@@ -109,7 +118,7 @@ def save_s3(data: dict, bucket: str) -> None:
     import boto3
     s3 = boto3.client('s3')
     latest_key = 'stats_league'+'.json'
-    history_key = 'history/'+date.today().isoformat()+'/'+latest_key
+    history_key = 'history/'+local_today().isoformat()+'/'+latest_key
     existing = {}
     try:
         existing = json.loads(s3.get_object(Bucket=bucket, Key=latest_key)['Body'].read())
