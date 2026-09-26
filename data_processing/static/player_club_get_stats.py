@@ -38,6 +38,20 @@ def fetch_player_stats(player_id: int) -> dict:
     player_birthCountry = player_data["people"][0]["birthCountry"]
     player_Position = player_data["people"][0]["primaryPosition"]['abbreviation']
 
+    # get differnce in years, most recent as date2 
+    def getDifYears (date1, date2):
+        dateformat = "%Y-%m-%d"
+        date1 = datetime.strptime(date1, dateformat)
+        date2 = datetime.strptime(date2, dateformat)
+
+        days_difference = (date2 - date1).days
+        years_fractional = days_difference / 365.25
+        years_whole = int(years_fractional)
+        return years_whole
+
+    player_age_debut = getDifYears(player_birthDate, career_mlb_debut)
+
+
     ##########  career games imports ##########
     # get all career games
     def get_game_log(season):
@@ -131,12 +145,24 @@ def fetch_player_stats(player_id: int) -> dict:
         running_sum += value
         hits_season_cumulative[key] = running_sum
 
+    ##########  calculate age per season ##########
+    age_per_season = {}
+    running_sum_age = player_age_debut
+    year_prev = int(career_mlb_debut[0:4])
+    for key, value in hits_per_season.items():
+        key_int = int(key)
+        yrDiff = key_int - year_prev
+        running_sum_age += yrDiff
+        age_per_season[key] = running_sum_age
+        year_prev = key_int
+
     # exports
     data = {
         'player_firstName': player_firstName,
         'player_lastName': player_lastName,
         'player_fullName': player_fullName,
         'player_age': player_age,
+        'player_age_debut': player_age_debut,
         'player_birthDate': player_birthDate,
         'player_birthCity': player_birthCity,
         'player_birthCountry': player_birthCountry,
@@ -169,12 +195,12 @@ def fetch_player_stats(player_id: int) -> dict:
     data['games_per_season'] = games_per_season
     data['hits_per_season'] = hits_per_season
     data['hits_season_cumulative'] = hits_season_cumulative
+    data['age_per_season'] = age_per_season
 
     # clean accents names
     for key in ['player_firstName','player_lastName','player_fullName','player_birthCity','player_birthCountry']:
         data[key] = unicodedata.normalize('NFKD', data[key]).encode('ascii', 'ignore').decode('ascii')
 
-    return data
 
 
 def save_local(data: dict) -> str:

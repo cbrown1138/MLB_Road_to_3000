@@ -1,30 +1,31 @@
 {
-  "today": "September 22, 2026",
+  "today": "September 26, 2026",
   "season": 2026,
   "player_firstName": "Bryce",
   "player_lastName": "Harper",
   "player_fullName": "Bryce Harper",
   "player_age": 33,
+  "player_age_debut": 19,
   "player_birthDate": "1992-10-16",
   "player_birthCity": "Las Vegas",
   "player_birthCountry": "USA",
   "player_Position": "1B",
-  "remaining_hits": 1049,
+  "remaining_hits": 1046,
   "career_mlb_debut": "2012-04-28",
-  "career_gamesPlayed": 1941,
-  "career_atBats": 6989,
-  "career_hits": 1951,
+  "career_gamesPlayed": 1945,
+  "career_atBats": 7002,
+  "career_hits": 1954,
   "career_avg": ".279",
-  "career_pace": 1.0051519835136526,
-  "career_pace_remaining": 1044,
+  "career_pace": 1.0046272493573265,
+  "career_pace_remaining": 1041,
   "season_current_team": "Philadelphia Phillies",
-  "season_hits": 150,
-  "season_games_played": 156,
-  "season_pace": 0.9615384615384616,
-  "season_pace_remaining": 1091,
-  "games30_hits": 35,
-  "games30_pace": 1.1666666666666667,
-  "games30_pace_remaining": 899,
+  "season_hits": 153,
+  "season_games_played": 160,
+  "season_pace": 0.95625,
+  "season_pace_remaining": 1094,
+  "games30_hits": 36,
+  "games30_pace": 1.2,
+  "games30_pace_remaining": 872,
   "games15_hits": 15,
   "games15_pace": 1.0,
   "games_30_hits_max": 46,
@@ -33,7 +34,7 @@
   "games_30_hits_max_pace": 1.5333333333333334,
   "games_30_hits_min": 16,
   "games_30_hits_min_date_end": "2016-05-30",
-  "games_30_hits_min_date_start": "2016-04-28",
+  "games_30_hits_min_date_start": "2016-04-29",
   "games_30_hits_min_pace": 0.5333333333333333,
   "games_per_season": {
     "2012": 139,
@@ -50,7 +51,7 @@
     "2023": 126,
     "2024": 145,
     "2025": 132,
-    "2026": 156
+    "2026": 160
   },
   "hits_per_season": {
     "2012": 144,
@@ -67,7 +68,7 @@
     "2023": 134,
     "2024": 157,
     "2025": 131,
-    "2026": 150
+    "2026": 153
   },
   "hits_season_cumulative": {
     "2012": 144,
@@ -84,6 +85,23 @@
     "2023": 1513,
     "2024": 1670,
     "2025": 1801,
-    "2026": 1951
+    "2026": 1954
+  },
+  "age_per_season": {
+    "2012": 19,
+    "2013": 20,
+    "2014": 21,
+    "2015": 22,
+    "2016": 23,
+    "2017": 24,
+    "2018": 25,
+    "2019": 26,
+    "2020": 27,
+    "2021": 28,
+    "2022": 29,
+    "2023": 30,
+    "2024": 31,
+    "2025": 32,
+    "2026": 33
   }
 }
