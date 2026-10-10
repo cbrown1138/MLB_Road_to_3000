@@ -14,52 +14,51 @@ Only 33 batters in MLB history have reached 3,000 career hits. This project trac
 - **Hot/cold band** — the best and worst 30-game rolling stretches of the player's career, with hits and the date each stretch ended.
 - **Footer** — "data last updated" timestamp, sourced from the newest snapshot.
 
-Currently tracked: Jose Altuve, Mookie Betts, Freddie Freeman, Manny Machado, Mike Trout, Bryce Harper, Juan Soto, Jose Ramirez, Francisco Lindor, Xander Bogaerts ([player_active.py](data_processing/daily/player_active.py)).
+Currently tracked: Jose Altuve, Mookie Betts, Freddie Freeman, Manny Machado, Mike Trout, Bryce Harper, Juan Soto, Jose Ramirez, Francisco Lindor, Xander Bogaerts ([players.py](data_processing/players.py)).
 
 ## Data pipeline
 
-Scripts live in [data_processing/](data_processing), split by how often they run:
-
-- **[daily/](data_processing/daily)** — everything here runs every day in AWS Lambda ([lambda_handler.py](lambda_handler.py)). Nothing else is packaged into the Lambda image.
-  - [player_active.py](data_processing/daily/player_active.py) holds the tracked player IDs; [player_active_get_stats.py](data_processing/daily/player_active_get_stats.py) pulls each player's career totals, current-season totals, and full career game logs from `statsapi.mlb.com` and computes the derived stats below.
-  - [league_active_get_stats.py](data_processing/daily/league_active_get_stats.py) adds the current season's league mean/max hits to `stats_league.json`, merging into the existing history.
-- **[static/](data_processing/static)** — run by hand, output committed to git: retired 3,000-hit-club players ([player_club.py](data_processing/static/player_club.py) → `site/data/club/`) and historic league stats.
-
-Locally each script saves under `site/data/`; in Lambda (`DATA_BUCKET` set) it writes to S3 instead, and CodeBuild syncs the bucket into `site/data/` at build time:
+[data_processing/](data_processing) is a Python package, organized by what the code does:
 
 ```
-site/data/active/stats_<LastName><FirstName>.json   # one per active player
-site/data/stats_league.json                          # league mean/max hits per season
-site/data/club/stats_<LastName><FirstName>.json      # static, committed only
+data_processing/
+  players.py      # player ID lists by group (tracked, retired_3000, retired_2000)
+  config.py       # data paths, storage keys, local_today()
+  storage.py      # read_json / write_json: site/data/ locally, S3 when DATA_BUCKET is set
+  fetch/          # pull from statsapi.mlb.com and compute stats; no I/O
+    player_active.py, player_retired.py, league.py, common.py
+  jobs/           # entry points: decide what to fetch and write it
+    daily.py              # tracked players + current-season league hits (AWS Lambda)
+    backfill_retired.py   # retired players, run by hand, committed to git
+    backfill_league.py    # historic seasons of league hits
+    backfill_qualified.py # this season's qualified hitters (+ their stats with --players)
 ```
 
-[site/lib/players.ts](site/lib/players.ts) reads `site/data/active/stats_*.json` at build time — the Next.js site itself never calls the MLB API directly.
+[lambda_handler.py](lambda_handler.py) calls `jobs.daily.run()`. Locally every job saves under `site/data/`; in Lambda it writes the same keys to S3 (plus a dated copy under `history/`), and CodeBuild syncs the bucket into `site/data/` at build time:
 
-### JSON schema
+```
+site/data/
+  players/index.json          # {group: [{id, name}]}, generated from players.py
+  players/<id>.json           # one file per player, by MLBAM id
+  league/hits_by_season.json  # league mean/max hits per season (merged, one row per season)
+  league/qualified_hitters.json
+```
+
+[site/lib/players.ts](site/lib/players.ts) reads these at build time — the Next.js site itself never calls the MLB API directly.
+
+### Player JSON
+
+Active ([fetch/player_active.py](data_processing/fetch/player_active.py)) and retired ([fetch/player_retired.py](data_processing/fetch/player_retired.py)) players share field names wherever the stat is the same.
 
 | Field | Meaning |
 |---|---|
-| `today` | Date the snapshot was generated |
-| `season` | Current MLB season year |
-| `player_firstName`, `player_lastName`, `player_fullName` | Player identity (accents stripped); `lastName` drives the URL slug, `lastName` + `firstName` the JSON filename |
-| `player_age`, `player_birthDate`, `player_birthCity`, `player_birthCountry` | Bio fields |
-| `player_Position` | Primary position abbreviation |
-| `remaining_hits` | `3000 - career_hits` |
-| `career_mlb_debut` | Debut date |
-| `career_gamesPlayed`, `career_atBats`, `career_hits`, `career_avg` | Career hitting totals from the MLB Stats API |
-| `career_pace` | `career_hits / career_gamesPlayed` |
-| `career_pace_remaining` | Games needed at career pace to reach 3,000 |
-| `season_current_team` | Current team name |
-| `season_hits`, `season_games_played`, `season_pace`, `season_pace_remaining` | Same shape, scoped to the current season |
-| `games30_hits`, `games30_pace`, `games30_pace_remaining` | Trailing 30-game rolling window |
-| `games15_hits`, `games15_pace` | Trailing 15-game rolling window |
-| `games_30_hits_max`, `games_30_hits_max_date_start`, `games_30_hits_max_date_end`, `games_30_hits_max_pace` | Best 30-game rolling window across the player's entire career, and when it started/ended |
-| `games_30_hits_min`, `games_30_hits_min_date_start`, `games_30_hits_min_date_end`, `games_30_hits_min_pace` | Worst 30-game rolling window across the player's entire career, and when it started/ended |
-| `games_per_season`, `hits_per_season` | Career games and hits keyed by season year |
-
-The canonical type is [`PlayerSnapshot`](site/lib/players.ts) — if the Python job's field names ever drift from this table, that's the type to check first.
-
-
+| `player_id`, `first_name`, `last_name`, `full_name` | Identity (accents stripped) |
+| `age`, `birth_date`, `birth_city`, `birth_country`, `position` | Bio |
+| `debut_date`, `debut_age` | MLB debut; retired players also have `final_date` |
+| `<split>_hits`, `_games`, `_PA`, `_AB`, `_AVG`, `_games_pace`, `_PA_pace`, `_AB_pace` | Stats per split. Splits: `career`, `last30games`, `last15games`, `best30games`, `worst30games` (the last two also have `_start_date`/`_end_date`); active players add `season` and `last120PA` |
+| `games_per_season`, `hits_per_season`, `PA_per_season`, `AB_per_season`, `hits_season_cumulative`, `age_per_season` | Keyed by season year |
+| Active only: `today`, `season`, `current_team`, `remaining_hits` | Snapshot date and current-season context |
+| Retired only: `game_logs_complete` | False when the API lacks game logs for part of the career (pre-1901); game-log splits are then omitted |
 
 ## Site stack
 
@@ -70,9 +69,9 @@ The canonical type is [`PlayerSnapshot`](site/lib/players.ts) — if the Python 
 ## Local development
 
 ```bash
-# refresh player data (requires `statsapi` installed; run from the repo root)
-python data_processing/daily/player_active.py
-python data_processing/daily/league_active_get_stats.py
+# refresh player data (requires MLB-StatsAPI installed; run from the repo root)
+python -m data_processing.jobs.daily
+python -m data_processing.jobs.backfill_retired  # retired_3000 by default
 
 # run the site
 cd site

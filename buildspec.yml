@@ -3,9 +3,10 @@ version: 0.2
 # Expects these as environment variables on the CodeBuild project itself
 # (Part B setup), not hardcoded here: DATA_BUCKET, SITE_BUCKET, DISTRIBUTION_ID
 #
-# The data bucket is flat: stats_<Last><First>.json (one per active player) and
-# stats_league.json, written daily by the stats-refresh Lambda. Only those are
-# synced, so committed data that never lives in S3 (site/data/club/) is untouched.
+# The data bucket mirrors site/data/: players/<id>.json, players/index.json and
+# league/hits_by_season.json, written daily by the stats-refresh Lambda
+# (data_processing/jobs/daily.py). The sync has no --delete, so committed files
+# that never live in S3 (retired players, qualified_hitters.json) are kept.
 
 phases:
   install:
@@ -13,9 +14,8 @@ phases:
       nodejs: 20
   pre_build:
     commands:
-      - aws s3 sync "s3://${DATA_BUCKET}/" site/data/active/ --delete --exclude "*" --include "stats_*.json" --exclude "stats_league.json" --exclude "history/*"
-      - aws s3 cp "s3://${DATA_BUCKET}/stats_league.json" site/data/stats_league.json
-      - ls site/data/active/stats_*.json > /dev/null
+      - aws s3 sync "s3://${DATA_BUCKET}/" site/data/ --exclude "*" --include "players/*" --include "league/*"
+      - test -s site/data/players/index.json && test -s site/data/league/hits_by_season.json
   build:
     on-failure: ABORT
     commands:

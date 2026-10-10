@@ -1,14 +1,34 @@
-import { readFileSync, readdirSync } from "fs";
+import { readFileSync } from "fs";
 import path from "path";
 
-// Player JSON snapshots are produced by ../data_processing/daily/player_active_get_stats.py
-// (one file per player, saved or synced into site/data/active) — no copy step.
-const DATA_DIR = path.join(process.cwd(), "data", "active");
-const FILE_PATTERN = /^stats_(.+)\.json$/;
+// All data is produced by ../data_processing (see its README section) and
+// saved or synced into site/data/ — no copy step:
+//   data/players/index.json        group -> [{id, name}], from data_processing/players.py
+//   data/players/<id>.json         one file per player, by MLBAM id
+//   data/league/hits_by_season.json
+const DATA_DIR = path.join(process.cwd(), "data");
+const PLAYERS_DIR = path.join(DATA_DIR, "players");
+const PLAYER_INDEX_PATH = path.join(PLAYERS_DIR, "index.json");
+const LEAGUE_HITS_PATH = path.join(DATA_DIR, "league", "hits_by_season.json");
 const MILESTONE = 3000;
 
-// Lives directly under data/, not data/active/ — it's not a per-player file.
-const LEAGUE_STATS_PATH = path.join(process.cwd(), "data", "stats_league.json");
+type PlayerGroup = "tracked" | "retired_3000" | "retired_2000";
+type PlayerIndex = Partial<Record<PlayerGroup, { id: number; name: string }[]>>;
+
+function readPlayerIndex(): PlayerIndex {
+  return JSON.parse(readFileSync(PLAYER_INDEX_PATH, "utf-8")) as PlayerIndex;
+}
+
+// Parsed player files for a group, skipping IDs whose file hasn't been fetched yet.
+function readGroup<T>(group: PlayerGroup): T[] {
+  return (readPlayerIndex()[group] ?? []).flatMap(({ id }) => {
+    try {
+      return [JSON.parse(readFileSync(path.join(PLAYERS_DIR, `${id}.json`), "utf-8")) as T];
+    } catch {
+      return [];
+    }
+  });
+}
 
 export type PlayerSnapshot = {
   today: string;
@@ -55,7 +75,7 @@ export type PlayerSnapshot = {
   games_30_hits_min_date_start: string;
   games_30_hits_min_pace: number;
 
-  // Keyed by season (year as string); produced by player_active_get_stats.py.
+  // Keyed by season (year as string); produced by fetch/player_active.py.
   games_per_season?: Record<string, number>;
   hits_per_season?: Record<string, number>;
   hits_season_cumulative?: Record<string, number>;
@@ -100,12 +120,7 @@ export function countryFlag(country: string): string {
 }
 
 export function getAllPlayers(): PlayerSnapshot[] {
-  const files = readdirSync(DATA_DIR).filter((f) => FILE_PATTERN.test(f));
-  return files
-    .map(
-      (f) =>
-        JSON.parse(readFileSync(path.join(DATA_DIR, f), "utf-8")) as PlayerSnapshot,
-    )
+  return readGroup<PlayerSnapshot>("tracked")
     .sort((a, b) => a.player_lastName.localeCompare(b.player_lastName));
 }
 
@@ -123,10 +138,10 @@ export function getLastUpdated(): string {
 }
 
 // League-wide hits per season for qualified hitters, produced by
-// ../data_processing/daily/league_active_get_stats.py. Keyed by season (year as string).
+// ../data_processing/jobs/daily.py and jobs/backfill_league.py. Keyed by season (year as string).
 export function getLeagueHitsMeanBySeason(): Record<string, number> {
   try {
-    const raw = readFileSync(LEAGUE_STATS_PATH, "utf-8");
+    const raw = readFileSync(LEAGUE_HITS_PATH, "utf-8");
     const parsed = JSON.parse(raw) as {
       all_qualified_hitters_mean_season?: { Season: number; Hits_Mean: number }[];
     };
@@ -138,10 +153,10 @@ export function getLeagueHitsMeanBySeason(): Record<string, number> {
 }
 
 // League-wide max hits per season among qualified hitters, produced by
-// ../data_processing/daily/league_active_get_stats.py. Keyed by season (year as string).
+// ../data_processing/jobs/daily.py and jobs/backfill_league.py. Keyed by season (year as string).
 export function getLeagueHitsMaxBySeason(): Record<string, number> {
   try {
-    const raw = readFileSync(LEAGUE_STATS_PATH, "utf-8");
+    const raw = readFileSync(LEAGUE_HITS_PATH, "utf-8");
     const parsed = JSON.parse(raw) as {
       all_qualified_hitters_max_season?: { Season: number; Hits_Max: number }[];
     };
@@ -153,36 +168,33 @@ export function getLeagueHitsMaxBySeason(): Record<string, number> {
 }
 
 // Retired 3,000-hit club members, produced by
-// ../data_processing/static/player_club_get_stats.py.
-const CLUB_DATA_DIR = path.join(process.cwd(), "data", "club");
-
+// ../data_processing/jobs/backfill_retired.py.
 export type ClubCumulative = {
-  // File key from stats_<key>.json, e.g. "BiggioCraig".
+  // MLBAM player id as a string, e.g. "110987" (Craig Biggio).
   key: string;
-  player_fullName: string;
+  full_name: string;
+  last_name: string;
+  hits_season_cumulative: Record<string, number>;
+};
+
+type RetiredPlayerFile = {
+  player_id: number;
+  full_name: string;
+  last_name: string;
   hits_season_cumulative: Record<string, number>;
 };
 
 // Career cumulative hits by season for every club member, sorted by last name.
 export function getAllClubCumulative(): ClubCumulative[] {
   try {
-    return readdirSync(CLUB_DATA_DIR)
-      .map((f) => f.match(FILE_PATTERN)?.[1])
-      .filter((key): key is string => Boolean(key))
-      .map((key) => {
-        const parsed = JSON.parse(
-          readFileSync(path.join(CLUB_DATA_DIR, `stats_${key}.json`), "utf-8"),
-        ) as Partial<ClubCumulative>;
-        if (!parsed.player_fullName || !parsed.hits_season_cumulative) return undefined;
-        return {
-          key,
-          player_fullName: parsed.player_fullName,
-          hits_season_cumulative: parsed.hits_season_cumulative,
-        };
-      })
-      .filter((c): c is ClubCumulative => Boolean(c))
-      // Keys are LastFirst, so this sorts by last name.
-      .sort((a, b) => a.key.localeCompare(b.key));
+    return readGroup<RetiredPlayerFile>("retired_3000")
+      .map((p) => ({
+        key: String(p.player_id),
+        full_name: p.full_name,
+        last_name: p.last_name,
+        hits_season_cumulative: p.hits_season_cumulative,
+      }))
+      .sort((a, b) => a.last_name.localeCompare(b.last_name));
   } catch {
     return [];
   }

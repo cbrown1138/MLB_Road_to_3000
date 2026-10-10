@@ -1,0 +1,1208 @@
+{
+  "tracked": [
+    {
+      "id": 514888,
+      "name": "Jose Altuve"
+    },
+    {
+      "id": 605141,
+      "name": "Mookie Betts"
+    },
+    {
+      "id": 518692,
+      "name": "Freddie Freeman"
+    },
+    {
+      "id": 592518,
+      "name": "Manny Machado"
+    },
+    {
+      "id": 545361,
+      "name": "Mike Trout"
+    },
+    {
+      "id": 547180,
+      "name": "Bryce Harper"
+    },
+    {
+      "id": 665742,
+      "name": "Juan Soto"
+    },
+    {
+      "id": 608070,
+      "name": "José Ramirez"
+    },
+    {
+      "id": 596019,
+      "name": "Francisco Lindor"
+    },
+    {
+      "id": 593428,
+      "name": "Xander Bogaerts"
+    }
+  ],
+  "retired_3000": [
+    {
+      "id": 110284,
+      "name": "Cap Anson"
+    },
+    {
+      "id": 110001,
+      "name": "Hank Aaron"
+    },
+    {
+      "id": 134181,
+      "name": "Adrian Beltre"
+    },
+    {
+      "id": 110987,
+      "name": "Craig Biggio"
+    },
+    {
+      "id": 111153,
+      "name": "Wade Boggs"
+    },
+    {
+      "id": 111437,
+      "name": "George Brett"
+    },
+    {
+      "id": 111495,
+      "name": "Lou Brock"
+    },
+    {
+      "id": 408234,
+      "name": "Miguel Cabrera"
+    },
+    {
+      "id": 111986,
+      "name": "Rod Carew"
+    },
+    {
+      "id": 112391,
+      "name": "Roberto Clemente"
+    },
+    {
+      "id": 112431,
+      "name": "Ty Cobb"
+    },
+    {
+      "id": 112506,
+      "name": "Eddie Collins"
+    },
+    {
+      "id": 115270,
+      "name": "Tony Gwynn"
+    },
+    {
+      "id": 115749,
+      "name": "Rickey Henderson"
+    },
+    {
+      "id": 116539,
+      "name": "Derek Jeter"
+    },
+    {
+      "id": 116822,
+      "name": "Al Kaline"
+    },
+    {
+      "id": 117414,
+      "name": "Nap Lajoie"
+    },
+    {
+      "id": 118495,
+      "name": "Willie Mays"
+    },
+    {
+      "id": 119236,
+      "name": "Paul Molitor"
+    },
+    {
+      "id": 119579,
+      "name": "Eddie Murray"
+    },
+    {
+      "id": 119602,
+      "name": "Stan Musial"
+    },
+    {
+      "id": 120191,
+      "name": "Rafael Palmeiro"
+    },
+    {
+      "id": 405395,
+      "name": "Albert Pujols"
+    },
+    {
+      "id": 121222,
+      "name": "Cal Ripken Jr."
+    },
+    {
+      "id": 121347,
+      "name": "Alex Rodriguez"
+    },
+    {
+      "id": 121454,
+      "name": "Pete Rose"
+    },
+    {
+      "id": 122566,
+      "name": "Tris Speaker"
+    },
+    {
+      "id": 400085,
+      "name": "Ichiro Suzuki"
+    },
+    {
+      "id": 123784,
+      "name": "Honus Wagner"
+    },
+    {
+      "id": 123905,
+      "name": "Paul Waner"
+    },
+    {
+      "id": 124448,
+      "name": "Dave Winfield"
+    },
+    {
+      "id": 124650,
+      "name": "Carl Yastrzemski"
+    },
+    {
+      "id": 124721,
+      "name": "Robin Yount"
+    }
+  ],
+  "retired_2000": [
+    {
+      "id": 121137,
+      "name": "Sam Rice"
+    },
+    {
+      "id": 112806,
+      "name": "Sam Crawford"
+    },
+    {
+      "id": 121311,
+      "name": "Frank Robinson"
+    },
+    {
+      "id": 111188,
+      "name": "Barry Bonds"
+    },
+    {
+      "id": 116891,
+      "name": "Willie Keeler"
+    },
+    {
+      "id": 110776,
+      "name": "Jake Beckley"
+    },
+    {
+      "id": 116156,
+      "name": "Rogers Hornsby"
+    },
+    {
+      "id": 122240,
+      "name": "Al Simmons"
+    },
+    {
+      "id": 124134,
+      "name": "Zack Wheat"
+    },
+    {
+      "id": 114448,
+      "name": "Frankie Frisch"
+    },
+    {
+      "id": 123744,
+      "name": "Omar Vizquel"
+    },
+    {
+      "id": 120117,
+      "name": "Mel Ott"
+    },
+    {
+      "id": 121578,
+      "name": "Babe Ruth"
+    },
+    {
+      "id": 110456,
+      "name": "Harold Baines"
+    },
+    {
+      "id": 111733,
+      "name": "Jesse Burkett"
+    },
+    {
+      "id": 121301,
+      "name": "Brooks Robinson"
+    },
+    {
+      "id": 121358,
+      "name": "Ivan Rodriguez"
+    },
+    {
+      "id": 114682,
+      "name": "Charlie Gehringer"
+    },
+    {
+      "id": 122280,
+      "name": "George Sisler"
+    },
+    {
+      "id": 115135,
+      "name": "Ken Griffey Jr."
+    },
+    {
+      "id": 113151,
+      "name": "Andre Dawson"
+    },
+    {
+      "id": 113028,
+      "name": "Johnny Damon"
+    },
+    {
+      "id": 120590,
+      "name": "Vada Pinson"
+    },
+    {
+      "id": 110297,
+      "name": "Luke Appling"
+    },
+    {
+      "id": 119983,
+      "name": "Al Oliver"
+    },
+    {
+      "id": 114987,
+      "name": "Goose Goslin"
+    },
+    {
+      "id": 120404,
+      "name": "Tony Perez"
+    },
+    {
+      "id": 116706,
+      "name": "Chipper Jones"
+    },
+    {
+      "id": 136860,
+      "name": "Carlos Beltrán"
+    },
+    {
+      "id": 110183,
+      "name": "Roberto Alomar"
+    },
+    {
+      "id": 114680,
+      "name": "Lou Gehrig"
+    },
+    {
+      "id": 122699,
+      "name": "Rusty Staub"
+    },
+    {
+      "id": 111663,
+      "name": "Bill Buckner"
+    },
+    {
+      "id": 120225,
+      "name": "Dave Parker"
+    },
+    {
+      "id": 124290,
+      "name": "Billy Williams"
+    },
+    {
+      "id": 112785,
+      "name": "Doc Cramer"
+    },
+    {
+      "id": 122111,
+      "name": "Gary Sheffield"
+    },
+    {
+      "id": 110290,
+      "name": "Luis Aparicio"
+    },
+    {
+      "id": 112352,
+      "name": "Fred Clarke"
+    },
+    {
+      "id": 111989,
+      "name": "Max Carey"
+    },
+    {
+      "id": 114361,
+      "name": "Nellie Fox"
+    },
+    {
+      "id": 113106,
+      "name": "George Davis"
+    },
+    {
+      "id": 115705,
+      "name": "Harry Heilmann"
+    },
+    {
+      "id": 124341,
+      "name": "Ted Williams"
+    },
+    {
+      "id": 114367,
+      "name": "Jimmie Foxx"
+    },
+    {
+      "id": 112867,
+      "name": "Lave Cross"
+    },
+    {
+      "id": 118276,
+      "name": "Rabbit Maranville"
+    },
+    {
+      "id": 120891,
+      "name": "Tim Raines Sr."
+    },
+    {
+      "id": 114641,
+      "name": "Steve Garvey"
+    },
+    {
+      "id": 113218,
+      "name": "Ed Delahanty"
+    },
+    {
+      "id": 114935,
+      "name": "Luis Gonzalez"
+    },
+    {
+      "id": 115223,
+      "name": "Vladimir Guerrero"
+    },
+    {
+      "id": 212297,
+      "name": "Julio Franco"
+    },
+    {
+      "id": 116439,
+      "name": "Reggie Jackson"
+    },
+    {
+      "id": 110533,
+      "name": "Ernie Banks"
+    },
+    {
+      "id": 110349,
+      "name": "Richie Ashburn"
+    },
+    {
+      "id": 120903,
+      "name": "Manny Ramirez"
+    },
+    {
+      "id": 113146,
+      "name": "Willie Davis"
+    },
+    {
+      "id": 114135,
+      "name": "Steve Finley"
+    },
+    {
+      "id": 123646,
+      "name": "George Van Haltren"
+    },
+    {
+      "id": 110236,
+      "name": "Garret Anderson"
+    },
+    {
+      "id": 118265,
+      "name": "Heinie Manush"
+    },
+    {
+      "id": 115732,
+      "name": "Todd Helton"
+    },
+    {
+      "id": 119371,
+      "name": "Joe Morgan"
+    },
+    {
+      "id": 110815,
+      "name": "Buddy Bell"
+    },
+    {
+      "id": 121588,
+      "name": "Jimmy Ryan"
+    },
+    {
+      "id": 123711,
+      "name": "Mickey Vernon"
+    },
+    {
+      "id": 118730,
+      "name": "Fred McGriff"
+    },
+    {
+      "id": 120074,
+      "name": "David Ortiz"
+    },
+    {
+      "id": 122247,
+      "name": "Ted Simmons"
+    },
+    {
+      "id": 118904,
+      "name": "Joe Medwick"
+    },
+    {
+      "id": 110029,
+      "name": "Bobby Abreu"
+    },
+    {
+      "id": 123245,
+      "name": "Frank Thomas"
+    },
+    {
+      "id": 112589,
+      "name": "Roger Connor"
+    },
+    {
+      "id": 116127,
+      "name": "Harry Hooper"
+    },
+    {
+      "id": 116999,
+      "name": "Jeff Kent"
+    },
+    {
+      "id": 122439,
+      "name": "Ozzie Smith"
+    },
+    {
+      "id": 123904,
+      "name": "Lloyd Waner"
+    },
+    {
+      "id": 112991,
+      "name": "Bill Dahlen"
+    },
+    {
+      "id": 276519,
+      "name": "Jimmy Rollins"
+    },
+    {
+      "id": 116338,
+      "name": "Torii Hunter"
+    },
+    {
+      "id": 121140,
+      "name": "Jim Rice"
+    },
+    {
+      "id": 121851,
+      "name": "Red Schoendienst"
+    },
+    {
+      "id": 113936,
+      "name": "Dwight Evans"
+    },
+    {
+      "id": 115007,
+      "name": "Mark Grace"
+    },
+    {
+      "id": 117863,
+      "name": "Kenny Lofton"
+    },
+    {
+      "id": 123446,
+      "name": "Pie Traynor"
+    },
+    {
+      "id": 118258,
+      "name": "Mickey Mantle"
+    },
+    {
+      "id": 122544,
+      "name": "Sammy Sosa"
+    },
+    {
+      "id": 123173,
+      "name": "Miguel Tejada"
+    },
+    {
+      "id": 118753,
+      "name": "Stuffy McInnis"
+    },
+    {
+      "id": 455976,
+      "name": "Nick Markakis"
+    },
+    {
+      "id": 121665,
+      "name": "Ryne Sandberg"
+    },
+    {
+      "id": 122319,
+      "name": "Enos Slaughter"
+    },
+    {
+      "id": 113099,
+      "name": "Chili Davis"
+    },
+    {
+      "id": 121497,
+      "name": "Edd Roush"
+    },
+    {
+      "id": 111812,
+      "name": "Brett Butler"
+    },
+    {
+      "id": 276545,
+      "name": "Michael Young"
+    },
+    {
+      "id": 124154,
+      "name": "Lou Whitaker"
+    },
+    {
+      "id": 123437,
+      "name": "Alan Trammell"
+    },
+    {
+      "id": 114182,
+      "name": "Carlton Fisk"
+    },
+    {
+      "id": 116786,
+      "name": "Joe Judge"
+    },
+    {
+      "id": 112157,
+      "name": "Orlando Cepeda"
+    },
+    {
+      "id": 115809,
+      "name": "Billy Herman"
+    },
+    {
+      "id": 123406,
+      "name": "Joe Torre"
+    },
+    {
+      "id": 117244,
+      "name": "Paul Konerko"
+    },
+    {
+      "id": 117501,
+      "name": "Barry Larkin"
+    },
+    {
+      "id": 124288,
+      "name": "Bernie Williams"
+    },
+    {
+      "id": 114526,
+      "name": "Andres Galarraga"
+    },
+    {
+      "id": 123272,
+      "name": "Jim Thome"
+    },
+    {
+      "id": 121074,
+      "name": "Edgar Renteria"
+    },
+    {
+      "id": 112549,
+      "name": "Dave Concepcion"
+    },
+    {
+      "id": 113069,
+      "name": "Jake Daubert"
+    },
+    {
+      "id": 122989,
+      "name": "B.J. Surhoff"
+    },
+    {
+      "id": 118416,
+      "name": "Eddie Mathews"
+    },
+    {
+      "id": 110432,
+      "name": "Jeff Bagwell"
+    },
+    {
+      "id": 111266,
+      "name": "Jim Bottomley"
+    },
+    {
+      "id": 123864,
+      "name": "Bobby Wallace"
+    },
+    {
+      "id": 120054,
+      "name": "Jim O'Rourke"
+    },
+    {
+      "id": 120790,
+      "name": "Kirby Puckett"
+    },
+    {
+      "id": 133380,
+      "name": "Aramis Ramirez"
+    },
+    {
+      "id": 112979,
+      "name": "Kiki Cuyler"
+    },
+    {
+      "id": 115167,
+      "name": "Charlie Grimm"
+    },
+    {
+      "id": 111524,
+      "name": "Dan Brouthers"
+    },
+    {
+      "id": 113598,
+      "name": "Hugh Duffy"
+    },
+    {
+      "id": 112854,
+      "name": "Joe Cronin"
+    },
+    {
+      "id": 114508,
+      "name": "Gary Gaetti"
+    },
+    {
+      "id": 114079,
+      "name": "Tony Fernández"
+    },
+    {
+      "id": 150324,
+      "name": "Carlos Lee"
+    },
+    {
+      "id": 113685,
+      "name": "Jimmy Dykes"
+    },
+    {
+      "id": 118694,
+      "name": "Willie McGee"
+    },
+    {
+      "id": 121697,
+      "name": "Ron Santo"
+    },
+    {
+      "id": 113461,
+      "name": "Patsy Donovan"
+    },
+    {
+      "id": 112678,
+      "name": "Tommy Corcoran"
+    },
+    {
+      "id": 112902,
+      "name": "Jose Cruz"
+    },
+    {
+      "id": 115174,
+      "name": "Marquis Grissom"
+    },
+    {
+      "id": 118860,
+      "name": "Bid McPhee"
+    },
+    {
+      "id": 111916,
+      "name": "Bert Campaneris"
+    },
+    {
+      "id": 118365,
+      "name": "Edgar Martinez"
+    },
+    {
+      "id": 119976,
+      "name": "John Olerud"
+    },
+    {
+      "id": 121836,
+      "name": "Mike Schmidt"
+    },
+    {
+      "id": 122685,
+      "name": "Willie Stargell"
+    },
+    {
+      "id": 123188,
+      "name": "Fred Tenney"
+    },
+    {
+      "id": 122023,
+      "name": "Joe Sewell"
+    },
+    {
+      "id": 119720,
+      "name": "Graig Nettles"
+    },
+    {
+      "id": 113935,
+      "name": "Darrell Evans"
+    },
+    {
+      "id": 116926,
+      "name": "Joe Kelley"
+    },
+    {
+      "id": 334393,
+      "name": "Juan Pierre"
+    },
+    {
+      "id": 113376,
+      "name": "Joe DiMaggio"
+    },
+    {
+      "id": 117356,
+      "name": "Joe Kuhel"
+    },
+    {
+      "id": 118605,
+      "name": "Willie McCovey"
+    },
+    {
+      "id": 120927,
+      "name": "Willie Randolph"
+    },
+    {
+      "id": 124435,
+      "name": "Willie Wilson"
+    },
+    {
+      "id": 116974,
+      "name": "Jason Kendall"
+    },
+    {
+      "id": 115283,
+      "name": "Stan Hack"
+    },
+    {
+      "id": 123203,
+      "name": "Bill Terry"
+    },
+    {
+      "id": 112651,
+      "name": "Cecil Cooper"
+    },
+    {
+      "id": 111281,
+      "name": "Larry Bowa"
+    },
+    {
+      "id": 112064,
+      "name": "Joe Carter"
+    },
+    {
+      "id": 115826,
+      "name": "Keith Hernandez"
+    },
+    {
+      "id": 112345,
+      "name": "Will Clark"
+    },
+    {
+      "id": 121010,
+      "name": "Pee Wee Reese"
+    },
+    {
+      "id": 118135,
+      "name": "Sherry Magee"
+    },
+    {
+      "id": 425877,
+      "name": "Yadier Molina"
+    },
+    {
+      "id": 110639,
+      "name": "Dick Bartell"
+    },
+    {
+      "id": 123833,
+      "name": "Larry Walker"
+    },
+    {
+      "id": 115386,
+      "name": "Billy Hamilton"
+    },
+    {
+      "id": 112216,
+      "name": "Hal Chase"
+    },
+    {
+      "id": 120044,
+      "name": "Magglio Ordonez"
+    },
+    {
+      "id": 400121,
+      "name": "Victor Martinez"
+    },
+    {
+      "id": 118443,
+      "name": "Don Mattingly"
+    },
+    {
+      "id": 122218,
+      "name": "Ruben Sierra"
+    },
+    {
+      "id": 110925,
+      "name": "Yogi Berra"
+    },
+    {
+      "id": 117245,
+      "name": "Ed Konetchy"
+    },
+    {
+      "id": 111321,
+      "name": "Ken Boyer"
+    },
+    {
+      "id": 115136,
+      "name": "Ken Griffey Sr."
+    },
+    {
+      "id": 117582,
+      "name": "Tommy Leach"
+    },
+    {
+      "id": 135784,
+      "name": "Placido Polanco"
+    },
+    {
+      "id": 115176,
+      "name": "Dick Groat"
+    },
+    {
+      "id": 119438,
+      "name": "Wally Moses"
+    },
+    {
+      "id": 408314,
+      "name": "José Reyes"
+    },
+    {
+      "id": 110719,
+      "name": "Don Baylor"
+    },
+    {
+      "id": 458015,
+      "name": "Joey Votto"
+    },
+    {
+      "id": 110189,
+      "name": "Moises Alou"
+    },
+    {
+      "id": 124371,
+      "name": "Maury Wills"
+    },
+    {
+      "id": 119613,
+      "name": "Buddy Myer"
+    },
+    {
+      "id": 117890,
+      "name": "Herman Long"
+    },
+    {
+      "id": 120536,
+      "name": "Mike Piazza"
+    },
+    {
+      "id": 408045,
+      "name": "Joe Mauer"
+    },
+    {
+      "id": 113112,
+      "name": "Tommy Davis"
+    },
+    {
+      "id": 122488,
+      "name": "Duke Snider"
+    },
+    {
+      "id": 119176,
+      "name": "Minnie Minoso"
+    },
+    {
+      "id": 119545,
+      "name": "Dale Murphy"
+    },
+    {
+      "id": 112180,
+      "name": "Chris Chambliss"
+    },
+    {
+      "id": 111736,
+      "name": "Ellis Burks"
+    },
+    {
+      "id": 120028,
+      "name": "Paul O'Neill"
+    },
+    {
+      "id": 123921,
+      "name": "John Ward"
+    },
+    {
+      "id": 123671,
+      "name": "Arky Vaughan"
+    },
+    {
+      "id": 110186,
+      "name": "Felipe Alou"
+    },
+    {
+      "id": 119046,
+      "name": "Clyde Milan"
+    },
+    {
+      "id": 113516,
+      "name": "Brian Downing"
+    },
+    {
+      "id": 407812,
+      "name": "Matt Holliday"
+    },
+    {
+      "id": 123182,
+      "name": "Garry Templeton Sr."
+    },
+    {
+      "id": 150093,
+      "name": "Alfonso Soriano"
+    },
+    {
+      "id": 112061,
+      "name": "Gary Carter"
+    },
+    {
+      "id": 117354,
+      "name": "Harvey Kuenn"
+    },
+    {
+      "id": 462101,
+      "name": "Elvis Andrus"
+    },
+    {
+      "id": 118872,
+      "name": "Hal McRae"
+    },
+    {
+      "id": 113052,
+      "name": "Alvin Dark"
+    },
+    {
+      "id": 112153,
+      "name": "Cesar Cedeno"
+    },
+    {
+      "id": 117051,
+      "name": "Harmon Killebrew"
+    },
+    {
+      "id": 123865,
+      "name": "Tim Wallach"
+    },
+    {
+      "id": 122100,
+      "name": "Jimmy Sheckard"
+    },
+    {
+      "id": 118765,
+      "name": "Ed McKean"
+    },
+    {
+      "id": 111747,
+      "name": "George Burns"
+    },
+    {
+      "id": 121409,
+      "name": "Scott Rolen"
+    },
+    {
+      "id": 117141,
+      "name": "Chuck Klein"
+    },
+    {
+      "id": 117488,
+      "name": "Carney Lansford"
+    },
+    {
+      "id": 123820,
+      "name": "Dixie Walker"
+    },
+    {
+      "id": 113857,
+      "name": "Del Ennis"
+    },
+    {
+      "id": 123681,
+      "name": "Bobby Veach"
+    },
+    {
+      "id": 113813,
+      "name": "Bob Elliott"
+    },
+    {
+      "id": 116780,
+      "name": "Wally Joyner"
+    },
+    {
+      "id": 111851,
+      "name": "Orlando Cabrera"
+    },
+    {
+      "id": 113660,
+      "name": "Ray Durham"
+    },
+    {
+      "id": 116913,
+      "name": "George Kell"
+    },
+    {
+      "id": 443558,
+      "name": "Nelson Cruz"
+    },
+    {
+      "id": 116620,
+      "name": "Bob Johnson"
+    },
+    {
+      "id": 408236,
+      "name": "Adrián González"
+    },
+    {
+      "id": 110849,
+      "name": "Johnny Bench"
+    },
+    {
+      "id": 116238,
+      "name": "Dummy Hoy"
+    },
+    {
+      "id": 150229,
+      "name": "A.J. Pierzynski"
+    },
+    {
+      "id": 113419,
+      "name": "Bobby Doerr"
+    },
+    {
+      "id": 114846,
+      "name": "Jack Glasscock"
+    },
+    {
+      "id": 115210,
+      "name": "Mark Grudzielanek"
+    },
+    {
+      "id": 113232,
+      "name": "Carlos Delgado"
+    },
+    {
+      "id": 116380,
+      "name": "Raul Ibanez"
+    },
+    {
+      "id": 118474,
+      "name": "Lee May"
+    },
+    {
+      "id": 408252,
+      "name": "Brandon Phillips"
+    },
+    {
+      "id": 122272,
+      "name": "Ken Singleton"
+    },
+    {
+      "id": 120522,
+      "name": "Tony Phillips"
+    },
+    {
+      "id": 114810,
+      "name": "Jim Gilliam"
+    },
+    {
+      "id": 120111,
+      "name": "Amos Otis"
+    },
+    {
+      "id": 122360,
+      "name": "Reggie Smith"
+    },
+    {
+      "id": 110396,
+      "name": "Earl Averill Sr."
+    },
+    {
+      "id": 111746,
+      "name": "George Burns"
+    },
+    {
+      "id": 118497,
+      "name": "Bill Mazeroski"
+    },
+    {
+      "id": 118433,
+      "name": "Gary Matthews Sr."
+    },
+    {
+      "id": 119207,
+      "name": "Johnny Mize"
+    },
+    {
+      "id": 111199,
+      "name": "Bobby Bonilla"
+    },
+    {
+      "id": 114739,
+      "name": "Jason Giambi"
+    },
+    {
+      "id": 118127,
+      "name": "Bill Madlock"
+    },
+    {
+      "id": 123122,
+      "name": "Tony Taylor"
+    },
+    {
+      "id": 124170,
+      "name": "Frank White"
+    },
+    {
+      "id": 110524,
+      "name": "Dave Bancroft"
+    },
+    {
+      "id": 124755,
+      "name": "Todd Zeile"
+    },
+    {
+      "id": 115094,
+      "name": "Shawn Green"
+    }
+  ]
+}

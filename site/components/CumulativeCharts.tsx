@@ -161,7 +161,7 @@ export function CumulativeCharts({
       ...(comparison && club.length > 0
         ? [
             {
-              label: comparison.player_fullName,
+              label: comparison.full_name,
               data: club.map((e) => e.value),
               years: club.map((e) => e.season),
               borderColor: COMPARISON_LINE_COLOR,
@@ -246,7 +246,7 @@ export function CumulativeCharts({
           >
             {clubPlayers.map((c) => (
               <option key={c.key} value={c.key}>
-                {c.player_fullName}
+                {c.full_name}
               </option>
             ))}
           </select>
@@ -261,7 +261,7 @@ export function CumulativeCharts({
             ref={canvasRef}
             role="img"
             aria-label={`Cumulative career hits by season for ${snapshot.player_fullName}${
-              comparison ? ` compared with ${comparison.player_fullName}` : ""
+              comparison ? ` compared with ${comparison.full_name}` : ""
             }`}
           />
         </div>

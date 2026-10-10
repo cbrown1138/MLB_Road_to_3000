@@ -17,7 +17,7 @@ import { SeasonCharts } from "@/components/SeasonCharts";
 import { CumulativeCharts } from "@/components/CumulativeCharts";
 
 // Default 3,000-hit club comparison on every player's cumulative chart.
-const DEFAULT_CLUB_COMPARISON = "BiggioCraig";
+const DEFAULT_CLUB_COMPARISON = "110987"; // Craig Biggio
 
 export function generateStaticParams() {
   return getAllPlayers().map((player) => ({

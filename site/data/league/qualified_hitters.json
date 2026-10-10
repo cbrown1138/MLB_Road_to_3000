@@ -1,0 +1,542 @@
+[
+  {
+    "id": 670541,
+    "name": "Yordan Alvarez"
+  },
+  {
+    "id": 672515,
+    "name": "Gabriel Moreno"
+  },
+  {
+    "id": 650333,
+    "name": "Luis Arraez"
+  },
+  {
+    "id": 802415,
+    "name": "Chandler Simpson"
+  },
+  {
+    "id": 672640,
+    "name": "Otto Lopez"
+  },
+  {
+    "id": 693304,
+    "name": "Nick Gonzales"
+  },
+  {
+    "id": 681198,
+    "name": "TJ Rumfield"
+  },
+  {
+    "id": 671739,
+    "name": "Michael Harris II"
+  },
+  {
+    "id": 650490,
+    "name": "Yandy Díaz"
+  },
+  {
+    "id": 694192,
+    "name": "Jackson Chourio"
+  },
+  {
+    "id": 664983,
+    "name": "Jake McCarthy"
+  },
+  {
+    "id": 665487,
+    "name": "Fernando Tatis Jr."
+  },
+  {
+    "id": 695506,
+    "name": "Jac Caglianone"
+  },
+  {
+    "id": 518692,
+    "name": "Freddie Freeman"
+  },
+  {
+    "id": 800050,
+    "name": "Chase DeLauter"
+  },
+  {
+    "id": 678882,
+    "name": "Ceddanne Rafaela"
+  },
+  {
+    "id": 686948,
+    "name": "Drake Baldwin"
+  },
+  {
+    "id": 689414,
+    "name": "Liam Hicks"
+  },
+  {
+    "id": 682829,
+    "name": "Elly De La Cruz"
+  },
+  {
+    "id": 701807,
+    "name": "Carson Benge"
+  },
+  {
+    "id": 807712,
+    "name": "Luke Keaschall"
+  },
+  {
+    "id": 680757,
+    "name": "Steven Kwan"
+  },
+  {
+    "id": 668227,
+    "name": "Randy Arozarena"
+  },
+  {
+    "id": 677951,
+    "name": "Bobby Witt Jr."
+  },
+  {
+    "id": 669364,
+    "name": "Xavier Edwards"
+  },
+  {
+    "id": 682985,
+    "name": "Riley Greene"
+  },
+  {
+    "id": 691718,
+    "name": "Pete Crow-Armstrong"
+  },
+  {
+    "id": 676475,
+    "name": "Alec Burleson"
+  },
+  {
+    "id": 805808,
+    "name": "Kevin McGonigle"
+  },
+  {
+    "id": 671277,
+    "name": "Luis García Jr."
+  },
+  {
+    "id": 803011,
+    "name": "Sam Antonacci"
+  },
+  {
+    "id": 808982,
+    "name": "Jung Hoo Lee"
+  },
+  {
+    "id": 643289,
+    "name": "Mauricio Dubón"
+  },
+  {
+    "id": 691406,
+    "name": "Junior Caminero"
+  },
+  {
+    "id": 805367,
+    "name": "Chase Meidroth"
+  },
+  {
+    "id": 660271,
+    "name": "Shohei Ohtani"
+  },
+  {
+    "id": 575929,
+    "name": "Willson Contreras"
+  },
+  {
+    "id": 666018,
+    "name": "Jonathan Aranda"
+  },
+  {
+    "id": 681624,
+    "name": "Andy Pages"
+  },
+  {
+    "id": 661388,
+    "name": "William Contreras"
+  },
+  {
+    "id": 673548,
+    "name": "Seiya Suzuki"
+  },
+  {
+    "id": 691023,
+    "name": "Jordan Walker"
+  },
+  {
+    "id": 547180,
+    "name": "Bryce Harper"
+  },
+  {
+    "id": 668930,
+    "name": "Brice Turang"
+  },
+  {
+    "id": 624413,
+    "name": "Pete Alonso"
+  },
+  {
+    "id": 641343,
+    "name": "Jake Bauers"
+  },
+  {
+    "id": 695578,
+    "name": "James Wood"
+  },
+  {
+    "id": 608324,
+    "name": "Alex Bregman"
+  },
+  {
+    "id": 686527,
+    "name": "Dominic Canzone"
+  },
+  {
+    "id": 641355,
+    "name": "Cody Bellinger"
+  },
+  {
+    "id": 643446,
+    "name": "Jeff McNeil"
+  },
+  {
+    "id": 700250,
+    "name": "Ben Rice"
+  },
+  {
+    "id": 701398,
+    "name": "Sal Stewart"
+  },
+  {
+    "id": 663538,
+    "name": "Nico Hoerner"
+  },
+  {
+    "id": 669003,
+    "name": "Garrett Mitchell"
+  },
+  {
+    "id": 670623,
+    "name": "Isaac Paredes"
+  },
+  {
+    "id": 672695,
+    "name": "Geraldo Perdomo"
+  },
+  {
+    "id": 647304,
+    "name": "Josh Naylor"
+  },
+  {
+    "id": 682928,
+    "name": "CJ Abrams"
+  },
+  {
+    "id": 668804,
+    "name": "Bryan Reynolds"
+  },
+  {
+    "id": 664040,
+    "name": "Brandon Lowe"
+  },
+  {
+    "id": 666182,
+    "name": "Bo Bichette"
+  },
+  {
+    "id": 665489,
+    "name": "Vladimir Guerrero Jr."
+  },
+  {
+    "id": 677649,
+    "name": "Ezequiel Duran"
+  },
+  {
+    "id": 607043,
+    "name": "Brandon Nimmo"
+  },
+  {
+    "id": 669016,
+    "name": "Brandon Marsh"
+  },
+  {
+    "id": 676391,
+    "name": "Ernie Clement"
+  },
+  {
+    "id": 646240,
+    "name": "Rafael Devers"
+  },
+  {
+    "id": 605141,
+    "name": "Mookie Betts"
+  },
+  {
+    "id": 681082,
+    "name": "Bryson Stott"
+  },
+  {
+    "id": 605137,
+    "name": "Josh Bell"
+  },
+  {
+    "id": 571448,
+    "name": "Nolan Arenado"
+  },
+  {
+    "id": 701538,
+    "name": "Jackson Merrill"
+  },
+  {
+    "id": 677587,
+    "name": "Brayan Rocchio"
+  },
+  {
+    "id": 686797,
+    "name": "Brooks Lee"
+  },
+  {
+    "id": 571970,
+    "name": "Max Muncy"
+  },
+  {
+    "id": 621566,
+    "name": "Matt Olson"
+  },
+  {
+    "id": 514888,
+    "name": "Jose Altuve"
+  },
+  {
+    "id": 678246,
+    "name": "Miguel Vargas"
+  },
+  {
+    "id": 606466,
+    "name": "Ketel Marte"
+  },
+  {
+    "id": 543807,
+    "name": "George Springer"
+  },
+  {
+    "id": 664761,
+    "name": "Alec Bohm"
+  },
+  {
+    "id": 702332,
+    "name": "Caleb Durbin"
+  },
+  {
+    "id": 677800,
+    "name": "Wilyer Abreu"
+  },
+  {
+    "id": 677594,
+    "name": "Julio Rodríguez"
+  },
+  {
+    "id": 702284,
+    "name": "Cole Young"
+  },
+  {
+    "id": 695734,
+    "name": "Daylen Lile"
+  },
+  {
+    "id": 696100,
+    "name": "Hunter Goodman"
+  },
+  {
+    "id": 683953,
+    "name": "Travis Bazzana"
+  },
+  {
+    "id": 665926,
+    "name": "Andrés Giménez"
+  },
+  {
+    "id": 693307,
+    "name": "Dillon Dingler"
+  },
+  {
+    "id": 802139,
+    "name": "JJ Wetherholt"
+  },
+  {
+    "id": 607208,
+    "name": "Trea Turner"
+  },
+  {
+    "id": 545361,
+    "name": "Mike Trout"
+  },
+  {
+    "id": 683737,
+    "name": "Michael Busch"
+  },
+  {
+    "id": 671056,
+    "name": "Iván Herrera"
+  },
+  {
+    "id": 666176,
+    "name": "Jo Adell"
+  },
+  {
+    "id": 669065,
+    "name": "Kyle Stowers"
+  },
+  {
+    "id": 665019,
+    "name": "Kody Clemens"
+  },
+  {
+    "id": 687263,
+    "name": "Zach Neto"
+  },
+  {
+    "id": 695600,
+    "name": "Carter Jensen"
+  },
+  {
+    "id": 682998,
+    "name": "Corbin Carroll"
+  },
+  {
+    "id": 645277,
+    "name": "Ozzie Albies"
+  },
+  {
+    "id": 671732,
+    "name": "Lawrence Butler"
+  },
+  {
+    "id": 608070,
+    "name": "José Ramírez"
+  },
+  {
+    "id": 663656,
+    "name": "Kyle Tucker"
+  },
+  {
+    "id": 672960,
+    "name": "Kazuma Okamoto"
+  },
+  {
+    "id": 656941,
+    "name": "Kyle Schwarber"
+  },
+  {
+    "id": 691026,
+    "name": "Masyn Winn"
+  },
+  {
+    "id": 665862,
+    "name": "Jazz Chisholm Jr."
+  },
+  {
+    "id": 593428,
+    "name": "Xander Bogaerts"
+  },
+  {
+    "id": 805300,
+    "name": "Jakob Marsee"
+  },
+  {
+    "id": 642715,
+    "name": "Willy Adames"
+  },
+  {
+    "id": 679529,
+    "name": "Spencer Torkelson"
+  },
+  {
+    "id": 521692,
+    "name": "Salvador Perez"
+  },
+  {
+    "id": 669394,
+    "name": "Jake Burger"
+  },
+  {
+    "id": 681715,
+    "name": "Heriberto Hernández"
+  },
+  {
+    "id": 668904,
+    "name": "Royce Lewis"
+  },
+  {
+    "id": 572233,
+    "name": "Christian Walker"
+  },
+  {
+    "id": 621493,
+    "name": "Taylor Ward"
+  },
+  {
+    "id": 683002,
+    "name": "Gunnar Henderson"
+  },
+  {
+    "id": 662139,
+    "name": "Daulton Varsho"
+  },
+  {
+    "id": 678662,
+    "name": "Ezequiel Tovar"
+  },
+  {
+    "id": 663586,
+    "name": "Austin Riley"
+  },
+  {
+    "id": 664023,
+    "name": "Ian Happ"
+  },
+  {
+    "id": 592518,
+    "name": "Manny Machado"
+  },
+  {
+    "id": 668709,
+    "name": "JJ Bleday"
+  },
+  {
+    "id": 543760,
+    "name": "Marcus Semien"
+  },
+  {
+    "id": 686555,
+    "name": "Isaac Collins"
+  },
+  {
+    "id": 701358,
+    "name": "Cam Smith"
+  },
+  {
+    "id": 808959,
+    "name": "Munetaka Murakami"
+  },
+  {
+    "id": 680776,
+    "name": "Jarren Duran"
+  },
+  {
+    "id": 656775,
+    "name": "Cedric Mullins"
+  },
+  {
+    "id": 695657,
+    "name": "Colson Montgomery"
+  },
+  {
+    "id": 663728,
+    "name": "Cal Raleigh"
+  }
+]
