@@ -5,6 +5,7 @@ With DATA_BUCKET set (Lambda), keys are S3 objects and every write also saves
 a dated copy under history/<date>/<key>. Otherwise keys are files under
 site/data/.
 """
+
 import json
 import os
 
