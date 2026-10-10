@@ -3,6 +3,7 @@
   "player_lastName": "Beltre",
   "player_fullName": "Adrian Beltre",
   "player_age": 47,
+  "player_age_debut": 19,
   "player_birthDate": "1979-04-07",
   "player_birthCity": "Santo Domingo",
   "player_birthCountry": "Dominican Republic",
@@ -92,5 +93,28 @@
     "2016": 2942,
     "2017": 3048,
     "2018": 3166
+  },
+  "age_per_season": {
+    "1998": 19,
+    "1999": 20,
+    "2000": 21,
+    "2001": 22,
+    "2002": 23,
+    "2003": 24,
+    "2004": 25,
+    "2005": 26,
+    "2006": 27,
+    "2007": 28,
+    "2008": 29,
+    "2009": 30,
+    "2010": 31,
+    "2011": 32,
+    "2012": 33,
+    "2013": 34,
+    "2014": 35,
+    "2015": 36,
+    "2016": 37,
+    "2017": 38,
+    "2018": 39
   }
 }

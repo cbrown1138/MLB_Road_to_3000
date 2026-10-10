@@ -3,6 +3,7 @@
   "player_lastName": "Clemente",
   "player_fullName": "Roberto Clemente",
   "player_age": 38,
+  "player_age_debut": 20,
   "player_birthDate": "1934-08-18",
   "player_birthCity": "Carolina",
   "player_birthCountry": "Puerto Rico",
@@ -83,5 +84,25 @@
     "1970": 2704,
     "1971": 2882,
     "1972": 3000
+  },
+  "age_per_season": {
+    "1955": 20,
+    "1956": 21,
+    "1957": 22,
+    "1958": 23,
+    "1959": 24,
+    "1960": 25,
+    "1961": 26,
+    "1962": 27,
+    "1963": 28,
+    "1964": 29,
+    "1965": 30,
+    "1966": 31,
+    "1967": 32,
+    "1968": 33,
+    "1969": 34,
+    "1970": 35,
+    "1971": 36,
+    "1972": 37
   }
 }

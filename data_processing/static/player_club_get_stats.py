@@ -201,7 +201,7 @@ def fetch_player_stats(player_id: int) -> dict:
     for key in ['player_firstName','player_lastName','player_fullName','player_birthCity','player_birthCountry']:
         data[key] = unicodedata.normalize('NFKD', data[key]).encode('ascii', 'ignore').decode('ascii')
 
-
+    return data
 
 def save_local(data: dict) -> str:
     script_dir = os.path.dirname(os.path.abspath(__file__))

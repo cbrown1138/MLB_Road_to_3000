@@ -2,7 +2,8 @@
   "player_firstName": "Rafael",
   "player_lastName": "Palmeiro",
   "player_fullName": "Rafael Palmeiro",
-  "player_age": 61,
+  "player_age": 62,
+  "player_age_debut": 21,
   "player_birthDate": "1964-09-24",
   "player_birthCity": "Havana",
   "player_birthCountry": "Cuba",
@@ -89,5 +90,27 @@
     "2003": 2780,
     "2004": 2922,
     "2005": 3020
+  },
+  "age_per_season": {
+    "1986": 21,
+    "1987": 22,
+    "1988": 23,
+    "1989": 24,
+    "1990": 25,
+    "1991": 26,
+    "1992": 27,
+    "1993": 28,
+    "1994": 29,
+    "1995": 30,
+    "1996": 31,
+    "1997": 32,
+    "1998": 33,
+    "1999": 34,
+    "2000": 35,
+    "2001": 36,
+    "2002": 37,
+    "2003": 38,
+    "2004": 39,
+    "2005": 40
   }
 }
