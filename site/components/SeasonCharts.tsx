@@ -31,8 +31,7 @@ const REGULAR_SEASON_END_MONTH = 9; // zero-based: October
 
 const CHART_HEIGHT = 256; // px
 
-// `value` is null for a season that's on the axis but hidden (2020 toggled off).
-type Entry = { season: string; value: number | null };
+type Entry = { season: string; value: number };
 
 type TrendLine = {
   label: string;
@@ -68,10 +67,9 @@ function inProgressSeason(snapshot: PlayerSnapshot): string | undefined {
 
 // Screen-reader summary, e.g. "Hits per season for X, 2010–2026. Most: 211 in 2023."
 function describe(entries: Entry[], what: string, name: string): string {
-  const shown = entries.filter((e): e is { season: string; value: number } => e.value != null);
-  if (shown.length === 0) return `${what} for ${name}`;
-  const best = shown.reduce((a, b) => (b.value > a.value ? b : a));
-  const range = `${shown[0].season}–${shown[shown.length - 1].season}`;
+  if (entries.length === 0) return `${what} for ${name}`;
+  const best = entries.reduce((a, b) => (b.value > a.value ? b : a));
+  const range = `${entries[0].season}–${entries[entries.length - 1].season}`;
   return `${what} for ${name}, ${range}. Most: ${formatCount(best.value)} in ${best.season}.`;
 }
 
@@ -91,7 +89,6 @@ function buildConfig({
   inProgress?: string;
 }): LineConfig {
   const labels = entries.map((e) => e.season);
-  const hidden = new Set(entries.filter((e) => e.value == null).map((e) => e.season));
   const inProgressIndex = inProgress ? labels.indexOf(inProgress) : -1;
   const diffTrend = trends.find((t) => t.showDiff);
 
@@ -116,7 +113,7 @@ function buildConfig({
 
   const trendSets: ChartDataset<"line", (number | null)[]>[] = trends.map((t, i) => ({
     label: t.label,
-    data: labels.map((s) => (hidden.has(s) ? null : (t.data[s] ?? null))),
+    data: labels.map((s) => t.data[s] ?? null),
     borderColor: t.color,
     backgroundColor: t.fillToPrevious ?? t.color,
     borderWidth: t.width ?? 1.5,
@@ -133,10 +130,8 @@ function buildConfig({
       responsive: true,
       maintainAspectRatio: false,
       interaction: { mode: "index", intersect: false },
-      // Break the line at hidden seasons instead of bridging them.
-      spanGaps: false,
-      // Season totals are discrete; monotone curves never overshoot them.
-      elements: { line: { cubicInterpolationMode: "monotone" } },
+      // Season totals are discrete, so connect them with straight segments.
+      elements: { line: { tension: 0 } },
       plugins: {
         refLine: refLine ?? false,
         legend: {
@@ -286,7 +281,7 @@ function SeasonLineChart({
                 {e.season}
                 {notes[e.season] ? ` (${notes[e.season]})` : ""}
               </th>
-              <td>{e.value == null ? "hidden" : formatCount(e.value)}</td>
+              <td>{formatCount(e.value)}</td>
               {trendList.map((t) => (
                 <td key={t.label}>
                   {t.data[e.season] != null ? formatCount(t.data[e.season]) : "—"}
@@ -321,19 +316,18 @@ export function SeasonCharts({
     [snapshot.hits_per_season],
   );
 
-  // 2020 stays on the axis when hidden, so the line visibly breaks there.
   const games = useMemo(
     () =>
       includeCovidYear
         ? allGames
-        : allGames.map((e) => (e.season === COVID_SEASON ? { ...e, value: null } : e)),
+        : allGames.filter((e) => e.season !== COVID_SEASON),
     [allGames, includeCovidYear],
   );
   const hits = useMemo(
     () =>
       includeCovidYear
         ? allHits
-        : allHits.map((e) => (e.season === COVID_SEASON ? { ...e, value: null } : e)),
+        : allHits.filter((e) => e.season !== COVID_SEASON),
     [allHits, includeCovidYear],
   );
 
@@ -350,7 +344,6 @@ export function SeasonCharts({
         label: "League max",
         color: LEAGUE_MAX_COLOR,
         data: leagueHitsMax,
-        width: 1,
         fillToPrevious: LEAGUE_BAND_COLOR,
       },
     ];
@@ -369,12 +362,10 @@ export function SeasonCharts({
       if (season) out[season] = out[season] ? `${out[season]} · ${note}` : note;
     };
     add(debutSeason, "Debut season");
-    if (hasCovidYear) {
-      add(COVID_SEASON, includeCovidYear ? "60-game season" : "60-game season (hidden)");
-    }
+    if (hasCovidYear) add(COVID_SEASON, "60-game season");
     add(inProgress, "Season in progress");
     return out;
-  }, [debutSeason, hasCovidYear, includeCovidYear, inProgress]);
+  }, [debutSeason, hasCovidYear, inProgress]);
 
   if (allGames.length === 0 && allHits.length === 0) return null;
 

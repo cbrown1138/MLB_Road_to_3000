@@ -27,14 +27,12 @@ Chart.register(
 
 export const CARD_BG_COLOR = "#064e3b"; // emerald-900, matches the card behind the canvas
 
-// The player is the subject, so their line is the brightest thing on the card;
-// context lines (league, comparisons) are dimmer.
-export const PLAYER_LINE_COLOR = "#a7f3d0"; // emerald-200
-export const PLAYER_FILL_COLOR = "rgba(167, 243, 208, 0.15)";
+export const PLAYER_LINE_COLOR = "#34d399"; // emerald-400
+export const PLAYER_FILL_COLOR = "rgba(52, 211, 153, 0.25)";
 export const COMPARISON_LINE_COLOR = "#fbbf24"; // amber-400
-export const LEAGUE_AVG_COLOR = "#a1a1aa"; // zinc-400
-export const LEAGUE_MAX_COLOR = "rgba(251, 191, 36, 0.6)"; // amber-400 @ 60%
-export const LEAGUE_BAND_COLOR = "rgba(161, 161, 170, 0.15)"; // zinc-400 @ 15%
+export const LEAGUE_AVG_COLOR = "#38bdf8"; // sky-400
+export const LEAGUE_MAX_COLOR = "#fbbf24"; // amber-400
+export const LEAGUE_BAND_COLOR = "rgba(251, 191, 36, 0.12)"; // amber-400 @ 12%
 export const REFERENCE_LINE_COLOR = "rgba(228, 228, 231, 0.7)"; // zinc-200
 
 export const AXIS_COLOR = "#e4e4e7"; // zinc-200
