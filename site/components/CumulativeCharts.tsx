@@ -1,41 +1,23 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import {
-  Chart,
-  CategoryScale,
-  Filler,
-  Legend,
-  LineController,
-  LineElement,
-  LinearScale,
-  PointElement,
-  Tooltip,
-  type Plugin,
-} from "chart.js";
+import { Chart, type Plugin } from "chart.js";
 import type { PlayerSnapshot, ClubCumulative } from "@/lib/players";
 import { SegmentedControl } from "@/components/SegmentedControl";
-
-Chart.register(
-  CategoryScale,
-  Filler,
-  Legend,
-  LineController,
-  LineElement,
-  LinearScale,
-  PointElement,
-  Tooltip,
-);
+import {
+  AXIS_COLOR,
+  COMPARISON_LINE_COLOR,
+  GRID_COLOR,
+  LEGEND_FONT,
+  PLAYER_FILL_COLOR,
+  PLAYER_LINE_COLOR,
+  REFERENCE_LINE_COLOR,
+  TICK_FONT,
+} from "@/lib/chartTheme";
 
 const CHART_HEIGHT = 288; // px
-const PLAYER_LINE_COLOR = "#34d399"; // emerald-400
-const PLAYER_FILL_COLOR = "rgba(52, 211, 153, 0.25)";
-const COMPARISON_LINE_COLOR = "#fbbf24"; // amber-400
-const AXIS_COLOR = "#e4e4e7"; // zinc-200
-const GRID_COLOR = "rgba(255,255,255,0.12)";
 
 const MILESTONE = 3000;
-const MILESTONE_LINE_COLOR = "rgba(228, 228, 231, 0.7)"; // zinc-200
 
 // Careers span different eras, so lines are lined up either by career season
 // (1st, 2nd, ...) or by the player's age that season, never by calendar year.
@@ -115,14 +97,14 @@ function milestonePlugin(
       ctx.save();
       ctx.lineWidth = 1;
       ctx.setLineDash([6, 4]);
-      ctx.font = "10px sans-serif";
+      ctx.font = `${TICK_FONT.size}px sans-serif`;
 
-      ctx.strokeStyle = MILESTONE_LINE_COLOR;
+      ctx.strokeStyle = REFERENCE_LINE_COLOR;
       ctx.beginPath();
       ctx.moveTo(chartArea.left, y);
       ctx.lineTo(chartArea.right, y);
       ctx.stroke();
-      ctx.fillStyle = MILESTONE_LINE_COLOR;
+      ctx.fillStyle = REFERENCE_LINE_COLOR;
       ctx.textAlign = "left";
       ctx.textBaseline = "bottom";
       ctx.fillText(MILESTONE.toLocaleString(), chartArea.left + 4, y - 3);
@@ -242,7 +224,7 @@ export function CumulativeCharts({
           legend: {
             position: "top",
             align: "start",
-            labels: { color: AXIS_COLOR, boxWidth: 16, font: { size: 11 } },
+            labels: { color: AXIS_COLOR, boxWidth: 16, font: LEGEND_FONT },
           },
           tooltip: {
             callbacks: {
@@ -262,9 +244,9 @@ export function CumulativeCharts({
               display: true,
               text: X_AXIS_TITLES[xAxis],
               color: AXIS_COLOR,
-              font: { size: 10, weight: "bold" },
+              font: { ...TICK_FONT, weight: "bold" },
             },
-            ticks: { color: AXIS_COLOR, font: { size: 10 } },
+            ticks: { color: AXIS_COLOR, font: TICK_FONT },
             grid: { color: GRID_COLOR },
           },
           y: {
@@ -273,7 +255,7 @@ export function CumulativeCharts({
             suggestedMax: MILESTONE * 1.1,
             ticks: {
               color: AXIS_COLOR,
-              font: { size: 10 },
+              font: TICK_FONT,
               callback: (v) => Number(v).toLocaleString(),
             },
             grid: { color: GRID_COLOR },
