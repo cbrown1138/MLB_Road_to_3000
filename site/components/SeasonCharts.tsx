@@ -19,7 +19,12 @@ import {
 } from "@/lib/chartTheme";
 
 const COVID_SEASON = "2020";
-const FULL_SEASON_GAMES: RefLineOptions = { value: 162, label: "Full season: 162" };
+// 2020 was a 60-game season, so the full-season line dips there.
+const FULL_SEASON_GAMES: RefLineOptions = {
+  value: 162,
+  label: "Full season: 162",
+  overrides: { [COVID_SEASON]: 60 },
+};
 const RECORD_SEASON_HITS: RefLineOptions = {
   value: 262,
   label: "Record: 262 (Ichiro, 2004)",

@@ -41,10 +41,15 @@ export const GRID_COLOR = "rgba(255, 255, 255, 0.08)";
 export const TICK_FONT = { size: 11 };
 export const LEGEND_FONT = { size: 12 };
 
-// A labelled horizontal line at a fixed y value (e.g. a 162-game season).
-// Enable per chart with `plugins: [refLinePlugin]` and set the line through
-// `options.plugins.refLine`; `false` turns it off.
-export type RefLineOptions = { value: number; label: string };
+// A labelled reference line at a y value (e.g. a 162-game season), with
+// optional per-category overrides (e.g. 60 games in 2020) that the line dips
+// to at that x label. Enable per chart with `plugins: [refLinePlugin]` and set
+// the line through `options.plugins.refLine`; `false` turns it off.
+export type RefLineOptions = {
+  value: number;
+  label: string;
+  overrides?: Record<string, number>;
+};
 
 declare module "chart.js" {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -59,22 +64,28 @@ export const refLinePlugin: Plugin<"line", RefLineOptions> = {
   beforeDatasetsDraw(chart, _args, opts) {
     if (opts?.value == null) return;
     const { ctx, chartArea, scales } = chart;
-    const y = scales.y.getPixelForValue(opts.value);
+    const labels = (chart.data.labels ?? []) as string[];
+    const yFor = (label: string | undefined) =>
+      scales.y.getPixelForValue(
+        (label != null ? opts.overrides?.[label] : undefined) ?? opts.value,
+      );
 
     ctx.save();
     ctx.lineWidth = 1;
     ctx.setLineDash([6, 4]);
     ctx.strokeStyle = REFERENCE_LINE_COLOR;
     ctx.beginPath();
-    ctx.moveTo(chartArea.left, y);
-    ctx.lineTo(chartArea.right, y);
+    // Flat out to the edges, through each label's value in between.
+    ctx.moveTo(chartArea.left, yFor(labels[0]));
+    labels.forEach((label, i) => ctx.lineTo(scales.x.getPixelForValue(i), yFor(label)));
+    ctx.lineTo(chartArea.right, yFor(labels[labels.length - 1]));
     ctx.stroke();
 
     ctx.fillStyle = REFERENCE_LINE_COLOR;
     ctx.font = `${TICK_FONT.size}px sans-serif`;
     ctx.textAlign = "right";
     ctx.textBaseline = "bottom";
-    ctx.fillText(opts.label, chartArea.right - 4, y - 3);
+    ctx.fillText(opts.label, chartArea.right - 4, yFor(labels[labels.length - 1]) - 3);
     ctx.restore();
   },
 };
