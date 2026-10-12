@@ -1,7 +1,29 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import {
+  Chart,
+  CategoryScale,
+  Filler,
+  Legend,
+  LineController,
+  LineElement,
+  LinearScale,
+  PointElement,
+  Tooltip,
+} from "chart.js";
 import type { PlayerSnapshot } from "@/lib/players";
+
+Chart.register(
+  CategoryScale,
+  Filler,
+  Legend,
+  LineController,
+  LineElement,
+  LinearScale,
+  PointElement,
+  Tooltip,
+);
 
 const COVID_SEASON = "2020";
 
@@ -14,9 +36,11 @@ type TrendLine = {
   dashed?: boolean;
 };
 
-const CHART_HEIGHT = 176; // px, matches h-44
+const CHART_HEIGHT = 256; // px
 const PLAYER_LINE_COLOR = "#34d399"; // emerald-400
 const PLAYER_FILL_COLOR = "rgba(52, 211, 153, 0.25)";
+const AXIS_COLOR = "#e4e4e7"; // zinc-200
+const GRID_COLOR = "rgba(255,255,255,0.12)";
 
 function toEntries(dict: Record<string, number> | undefined): Entry[] {
   if (!dict) return [];
@@ -25,48 +49,19 @@ function toEntries(dict: Record<string, number> | undefined): Entry[] {
     .sort((a, b) => Number(a.season) - Number(b.season));
 }
 
-// Picks a "nice" step (1/2/5 x a power of 10) so axis ticks land on
-// round numbers, then returns ascending ticks from 0 up to >= maxValue.
-function getNiceTicks(maxValue: number, tickCount = 4): number[] {
-  if (maxValue <= 0) return [0, 1];
-  const rawStep = maxValue / tickCount;
-  const magnitude = Math.pow(10, Math.floor(Math.log10(rawStep)));
-  const residual = rawStep / magnitude;
-  const step =
-    (residual > 5 ? 10 : residual > 2 ? 5 : residual > 1 ? 2 : 1) * magnitude;
-  const niceMax = Math.ceil(maxValue / step) * step;
-
-  const ticks: number[] = [];
-  for (let v = 0; v <= niceMax + step / 2; v += step) {
-    ticks.push(Math.round(v));
-  }
-  return ticks;
-}
-
-// Like getNiceTicks, but the axis max is pinned to a caller-supplied value
-// (e.g. 162 games — a full MLB season) instead of being rounded up.
-function getFixedMaxTicks(maxValue: number, tickCount = 4): number[] {
-  const rawStep = maxValue / tickCount;
-  const magnitude = Math.pow(10, Math.floor(Math.log10(rawStep)));
-  const residual = rawStep / magnitude;
-  const step =
-    (residual > 5 ? 10 : residual > 2 ? 5 : residual > 1 ? 2 : 1) * magnitude;
-
-  const ticks: number[] = [];
-  for (let v = 0; v < maxValue; v += step) {
-    ticks.push(Math.round(v));
-  }
-  ticks.push(maxValue);
-  return ticks;
-}
-
+// Per-season line chart. Styled after
+// https://www.chartjs.org/docs/latest/samples/line/styling.html — the
+// player's own line is "filled", overlay trend lines are "unfilled".
 function SeasonLineChart({
   title,
+  seriesLabel,
   entries,
   yMax,
   trends,
 }: {
   title: string;
+  // Legend / tooltip label for the player's own line.
+  seriesLabel: string;
   entries: Entry[];
   // Pin the axis max to a fixed value instead of auto-scaling to the data.
   yMax?: number;
@@ -74,187 +69,108 @@ function SeasonLineChart({
   // `entries` are drawn — no extra years are added to the axis.
   trends?: TrendLine[];
 }) {
-  const trendValues = (trends ?? []).flatMap((t) =>
-    entries.map((e) => t.data[e.season]).filter((v): v is number => v != null),
-  );
-  const rawMax = Math.max(...entries.map((e) => e.value), ...trendValues, 1);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  const ticks =
-    yMax != null
-      ? getFixedMaxTicks(Math.max(yMax, rawMax))
-      : getNiceTicks(rawMax);
-  const max = ticks[ticks.length - 1];
+  useEffect(() => {
+    if (!canvasRef.current || entries.length === 0) return;
 
-  // y-axis (horizontal) lines at each non-zero tick, x-axis (vertical) lines
-  // at each season — drawn as background layers so they sit behind the data.
-  const gridTicks = ticks.filter((t) => t > 0);
-  const gridLines = [
-    ...gridTicks.map((t) => ({
-      size: "100% 1px",
-      position: `0 ${100 - (t / max) * 100}%`,
-    })),
-    ...entries.map((_, i) => ({
-      size: "1px 100%",
-      position: `${((i + 0.5) / entries.length) * 100}% 0`,
-    })),
-  ];
-  const gridStyle = gridLines.length
-    ? {
-        backgroundImage: gridLines
-          .map(() => "linear-gradient(rgba(255,255,255,0.12), rgba(255,255,255,0.12))")
-          .join(", "),
-        backgroundSize: gridLines.map((l) => l.size).join(", "),
-        backgroundPosition: gridLines.map((l) => l.position).join(", "),
-        backgroundRepeat: "no-repeat",
-      }
-    : undefined;
+    const labels = entries.map((e) => e.season);
+    const trendSets = (trends ?? []).map((t) => ({
+      label: t.label,
+      data: entries.map((e) => t.data[e.season] ?? null),
+      borderColor: t.color,
+      backgroundColor: t.color,
+      borderDash: t.dashed ? [4, 3] : [],
+      fill: false,
+      tension: 0.2,
+      pointRadius: 2,
+      spanGaps: true,
+    }));
 
-  const trendLines = (trends ?? []).map((t) => ({
-    ...t,
-    points: entries
-      .map((e, i) => {
-        const v = t.data[e.season];
-        if (v == null) return null;
-        const x = ((i + 0.5) / entries.length) * 100;
-        const y = 100 - (v / max) * 100;
-        return `${x},${y}`;
-      })
-      .filter((p): p is string => p !== null),
-  }));
+    const rawMax = Math.max(
+      ...entries.map((e) => e.value),
+      ...trendSets.flatMap((t) => t.data.filter((v): v is number => v != null)),
+      1,
+    );
 
-  // Player's own data — a filled line, matching the "filled" style in
-  // https://www.chartjs.org/docs/latest/samples/line/styling.html
-  const playerPoints = entries.map((e, i) => ({
-    x: ((i + 0.5) / entries.length) * 100,
-    y: 100 - (e.value / max) * 100,
-  }));
-  const playerLine = playerPoints.map((p) => `${p.x},${p.y}`).join(" ");
-  const playerArea =
-    playerPoints.length > 0
-      ? [
-          `${playerPoints[0].x},100`,
-          playerLine,
-          `${playerPoints[playerPoints.length - 1].x},100`,
-        ].join(" ")
-      : "";
+    const chart = new Chart(canvasRef.current, {
+      type: "line",
+      data: {
+        labels,
+        datasets: [
+          {
+            label: seriesLabel,
+            data: entries.map((e) => e.value),
+            borderColor: PLAYER_LINE_COLOR,
+            backgroundColor: PLAYER_FILL_COLOR,
+            borderDash: [],
+            fill: true,
+            tension: 0.2,
+            pointRadius: 2,
+            spanGaps: false,
+          },
+          ...trendSets,
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: "index", intersect: false },
+        plugins: {
+          legend: {
+            position: "top",
+            align: "start",
+            labels: { color: AXIS_COLOR, boxWidth: 16, font: { size: 11 } },
+          },
+          tooltip: {
+            callbacks: {
+              title: (items) => `${items[0]?.label ?? ""} season`,
+              label: (item) =>
+                `${item.dataset.label}: ${(item.parsed.y ?? 0).toLocaleString()}`,
+            },
+          },
+        },
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: "Season",
+              color: AXIS_COLOR,
+              font: { size: 10, weight: "bold" },
+            },
+            ticks: {
+              color: AXIS_COLOR,
+              font: { size: 10 },
+              maxRotation: 0,
+              autoSkip: true,
+              callback: (_, i) => `'${labels[i]?.slice(-2) ?? ""}`,
+            },
+            grid: { color: GRID_COLOR },
+          },
+          y: {
+            beginAtZero: true,
+            max: yMax != null ? Math.max(yMax, rawMax) : undefined,
+            ticks: {
+              color: AXIS_COLOR,
+              font: { size: 10 },
+              callback: (v) => Number(v).toLocaleString(),
+            },
+            grid: { color: GRID_COLOR },
+          },
+        },
+      },
+    });
+
+    return () => chart.destroy();
+  }, [entries, seriesLabel, yMax, trends]);
 
   return (
     <div className="rounded-xl bg-emerald-900 p-5 shadow-sm ring-1 ring-zinc-800">
-      <div className="mb-4">
-        <p className="text-sm font-medium uppercase tracking-wide text-zinc-200">
-          {title}
-        </p>
-        {trendLines.length > 0 ? (
-          <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1">
-            {trendLines.map((t) => (
-              <p
-                key={t.label}
-                className="flex items-center gap-2 text-[11px] text-zinc-200"
-              >
-                <span
-                  className="inline-block h-0.5 w-4 rounded"
-                  style={{ backgroundColor: t.color }}
-                />
-                {t.label}
-              </p>
-            ))}
-          </div>
-        ) : (
-          // invisible placeholder — keeps this chart's plot area lined up
-          // with charts that do show a legend row (e.g. Hits by season)
-          <p className="invisible mt-1 text-[11px]" aria-hidden>
-            &nbsp;
-          </p>
-        )}
-      </div>
-
-      <div className="flex gap-2">
-
-        {/* y-axis ticks */}
-        <div
-          className="flex w-8 shrink-0 flex-col justify-between text-right text-[10px] tabular-nums text-zinc-200"
-          style={{ height: CHART_HEIGHT }}
-        >
-          {[...ticks].reverse().map((t) => (
-            <span key={t}>{t.toLocaleString()}</span>
-          ))}
-        </div>
-
-        <div className="min-w-0 flex-1">
-          {/* plot area */}
-          <div
-            className="relative border-b border-zinc-200"
-            style={{ height: CHART_HEIGHT, ...gridStyle }}
-          >
-            {playerPoints.length > 1 && (
-              <svg
-                className="pointer-events-none absolute inset-0 h-full w-full overflow-visible"
-                viewBox="0 0 100 100"
-                preserveAspectRatio="none"
-                aria-hidden
-              >
-                <polygon points={playerArea} fill={PLAYER_FILL_COLOR} stroke="none" />
-                <polyline
-                  points={playerLine}
-                  fill="none"
-                  stroke={PLAYER_LINE_COLOR}
-                  strokeWidth={2}
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  vectorEffect="non-scaling-stroke"
-                />
-              </svg>
-            )}
-
-            {trendLines.map(
-              (t) =>
-                t.points.length > 1 && (
-                  <svg
-                    key={t.label}
-                    className="pointer-events-none absolute inset-0 h-full w-full overflow-visible"
-                    viewBox="0 0 100 100"
-                    preserveAspectRatio="none"
-                    aria-hidden
-                  >
-                    <polyline
-                      points={t.points.join(" ")}
-                      fill="none"
-                      stroke={t.color}
-                      strokeWidth={2}
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeDasharray={t.dashed ? "4 3" : undefined}
-                      vectorEffect="non-scaling-stroke"
-                    />
-                  </svg>
-                ),
-            )}
-          </div>
-
-          {/* x-axis labels — mirror the flex layout above. min-w-0 lets
-              labels shrink to fit the plot width instead of overflowing it
-              when a long career means many seasons. */}
-          <div className="mt-1 flex gap-0.5 sm:gap-1">
-            {entries.map((e) => (
-              <div
-                key={e.season}
-                className="flex min-w-0 flex-1 flex-col items-center overflow-hidden leading-tight"
-              >
-                <span className="text-[8px] tabular-nums text-zinc-200 sm:text-[10px]">
-                  {e.value}
-                </span>
-                <span className="text-[8px] tabular-nums text-zinc-200 sm:text-[10px]">
-                  {`'${e.season.slice(-2)}`}
-                </span>
-              </div>
-            ))}
-          </div>
-
-          {/* x-axis title */}
-          <p className="mt-1 text-center text-[10px] font-medium uppercase tracking-wide text-zinc-200">
-            Season
-          </p>
-        </div>
+      <p className="mb-2 text-sm font-medium uppercase tracking-wide text-zinc-200">
+        {title}
+      </p>
+      <div className="relative" style={{ height: CHART_HEIGHT }}>
+        <canvas ref={canvasRef} role="img" aria-label={title} />
       </div>
     </div>
   );
@@ -271,35 +187,54 @@ export function SeasonCharts({
 }) {
   const [includeCovidYear, setIncludeCovidYear] = useState(true);
 
-  const allGames = toEntries(snapshot.games_per_season);
-  const allHits = toEntries(snapshot.hits_per_season);
+  // Memoized so the charts are only rebuilt when their data actually changes.
+  const allGames = useMemo(
+    () => toEntries(snapshot.games_per_season),
+    [snapshot.games_per_season],
+  );
+  const allHits = useMemo(
+    () => toEntries(snapshot.hits_per_season),
+    [snapshot.hits_per_season],
+  );
+
+  const games = useMemo(
+    () =>
+      includeCovidYear
+        ? allGames
+        : allGames.filter((e) => e.season !== COVID_SEASON),
+    [allGames, includeCovidYear],
+  );
+  const hits = useMemo(
+    () =>
+      includeCovidYear
+        ? allHits
+        : allHits.filter((e) => e.season !== COVID_SEASON),
+    [allHits, includeCovidYear],
+  );
+
+  const hitsTrends = useMemo(
+    () =>
+      [
+        leagueHitsMean && {
+          label: "League Avg",
+          color: "#38bdf8", // sky-400
+          data: leagueHitsMean,
+          dashed: true,
+        },
+        leagueHitsMax && {
+          label: "League Max",
+          color: "#fbbf24", // amber-400
+          data: leagueHitsMax,
+        },
+      ].filter((t): t is TrendLine => Boolean(t)),
+    [leagueHitsMean, leagueHitsMax],
+  );
 
   if (allGames.length === 0 && allHits.length === 0) return null;
 
   const hasCovidYear =
     allGames.some((e) => e.season === COVID_SEASON) ||
     allHits.some((e) => e.season === COVID_SEASON);
-
-  const games = includeCovidYear
-    ? allGames
-    : allGames.filter((e) => e.season !== COVID_SEASON);
-  const hits = includeCovidYear
-    ? allHits
-    : allHits.filter((e) => e.season !== COVID_SEASON);
-
-  const hitsTrends: TrendLine[] = [
-    leagueHitsMean && {
-      label: "Hits: League Avg",
-      color: "#38bdf8",
-      data: leagueHitsMean,
-      dashed: true,
-    },
-    leagueHitsMax && {
-      label: "Hits: League Max",
-      color: "#fbbf24",
-      data: leagueHitsMax,
-    },
-  ].filter((t): t is TrendLine => Boolean(t));
 
   return (
     <section className="w-full max-w-5xl">
@@ -310,6 +245,7 @@ export function SeasonCharts({
         {games.length > 0 && (
           <SeasonLineChart
             title="Games by season"
+            seriesLabel={`${snapshot.player_fullName} games`}
             entries={games}
             yMax={162}
           />
@@ -317,6 +253,7 @@ export function SeasonCharts({
         {hits.length > 0 && (
           <SeasonLineChart
             title="Hits by season"
+            seriesLabel={`${snapshot.player_fullName} hits`}
             entries={hits}
             trends={hitsTrends}
             yMax={262}
