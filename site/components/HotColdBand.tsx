@@ -11,14 +11,12 @@ function StreakCard({
   hits,
   date_start,
   date_end,
-  pace,
 }: {
   tone: "hot" | "cold";
   label: string;
   hits: number;
   date_start: string;
   date_end: string;
-  pace: number;
 }) {
   const accent = tone === "hot" ? "text-emerald-400" : "text-red-300";
   const borderAccent =
@@ -55,18 +53,16 @@ export function HotColdBand({ snapshot }: { snapshot: PlayerSnapshot }) {
         <StreakCard
           tone="hot"
           label="Hottest streak"
-          hits={snapshot.games_30_hits_max}
-          date_start={snapshot.games_30_hits_max_date_start}
-          date_end={snapshot.games_30_hits_max_date_end}
-          pace={snapshot.games_30_hits_max_pace}
+          hits={snapshot.best30games_hits}
+          date_start={snapshot.best30games_start_date}
+          date_end={snapshot.best30games_end_date}
         />
         <StreakCard
           tone="cold"
           label="Coldest streak"
-          hits={snapshot.games_30_hits_min}
-          date_start={snapshot.games_30_hits_min_date_start}
-          date_end={snapshot.games_30_hits_min_date_end}
-          pace={snapshot.games_30_hits_min_pace}
+          hits={snapshot.worst30games_hits}
+          date_start={snapshot.worst30games_start_date}
+          date_end={snapshot.worst30games_end_date}
         />
       </div>
     </section>

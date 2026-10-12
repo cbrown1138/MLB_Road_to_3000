@@ -1,18 +1,18 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { PlayerSnapshot } from "@/lib/players";
-import { countryFlag, slugify } from "@/lib/players";
+import { countryFlag, formatAvg, playerPhoto } from "@/lib/players";
 
 export function PlayerCard({ snapshot }: { snapshot: PlayerSnapshot }) {
   return (
     <Link
-      href={`/players/${slugify(snapshot.player_lastName)}`}
+      href={`/players/${snapshot.slug}`}
       className="flex flex-col overflow-hidden rounded-xl bg-emerald-900 shadow-sm ring-1 ring-zinc-800 transition-colors hover:ring-zinc-700"
     >
       <div className="relative aspect-[3/4] w-full">
         <Image
-          src={`/${slugify(snapshot.player_lastName)}.jpeg`}
-          alt={snapshot.player_fullName}
+          src={playerPhoto(snapshot)}
+          alt={snapshot.full_name}
           fill
           sizes="(max-width: 1024px) 50vw, 25vw"
           className="object-cover"
@@ -21,17 +21,17 @@ export function PlayerCard({ snapshot }: { snapshot: PlayerSnapshot }) {
       <div className="flex flex-1 flex-col gap-3 p-4">
         <div>
           <p className="text-lg font-semibold text-zinc-200">
-            {snapshot.player_fullName}
+            {snapshot.full_name}
           </p>
           <p className="text-sm text-zinc-200">
-            {snapshot.player_Position} | {snapshot.season_current_team}
+            {snapshot.position} | {snapshot.current_team}
           </p>
           <p className="text-sm text-zinc-200">
-             MLB debut {new Date(snapshot.career_mlb_debut).getFullYear()} | Age {snapshot.player_age}
+             MLB debut {new Date(snapshot.debut_date).getFullYear()} | Age {snapshot.age}
           </p>
           <p className="text-sm text-zinc-200">
-            {snapshot.player_birthCity},{" "}
-            {snapshot.player_birthCountry} {countryFlag(snapshot.player_birthCountry)}{" "}
+            {snapshot.birth_city},{" "}
+            {snapshot.birth_country} {countryFlag(snapshot.birth_country)}{" "}
           </p>
         </div>
         <div className="mt-auto border-t border-zinc-800 pt-3 text-center">
@@ -41,8 +41,8 @@ export function PlayerCard({ snapshot }: { snapshot: PlayerSnapshot }) {
         </div>
         <div className="mt-auto border-t border-zinc-800 pt-3">
           <p className="text-s text-zinc-200 text-center">
-            {snapshot.career_avg.toLocaleString()} AVG | {snapshot.career_hits.toLocaleString()} Hits <br/>
-            {snapshot.career_gamesPlayed.toLocaleString()} Games
+            {formatAvg(snapshot.career_AVG)} AVG | {snapshot.career_hits.toLocaleString()} Hits <br/>
+            {snapshot.career_games.toLocaleString()} Games
           </p>
         </div>
       </div>

@@ -14,6 +14,7 @@ import {
   type Plugin,
 } from "chart.js";
 import type { PlayerSnapshot, ClubCumulative } from "@/lib/players";
+import { SegmentedControl } from "@/components/SegmentedControl";
 
 Chart.register(
   CategoryScale,
@@ -36,30 +37,66 @@ const GRID_COLOR = "rgba(255,255,255,0.12)";
 const MILESTONE = 3000;
 const MILESTONE_LINE_COLOR = "rgba(228, 228, 231, 0.7)"; // zinc-200
 
-type Entry = { season: string; value: number };
+// Careers span different eras, so lines are lined up either by career season
+// (1st, 2nd, ...) or by the player's age that season, never by calendar year.
+type XAxis = "season" | "age";
 
-function toEntries(dict: Record<string, number> | undefined): Entry[] {
-  if (!dict) return [];
-  return Object.entries(dict)
-    .map(([season, value]) => ({ season, value }))
-    .sort((a, b) => Number(a.season) - Number(b.season));
+const X_AXIS_OPTIONS: { value: XAxis; label: string }[] = [
+  { value: "season", label: "By career season" },
+  { value: "age", label: "By age" },
+];
+
+const X_AXIS_TITLES: Record<XAxis, string> = {
+  season: "Career season",
+  age: "Age",
+};
+
+// One point per season; x is the career-season number or the age.
+type Point = { x: number; season: string; value: number };
+
+function toPoints(
+  cumulative: Record<string, number> | undefined,
+  ages: Record<string, number> | undefined,
+  xAxis: XAxis,
+): Point[] {
+  if (!cumulative) return [];
+  const sorted = Object.entries(cumulative).sort(
+    ([a], [b]) => Number(a) - Number(b),
+  );
+  return sorted.flatMap(([season, value], i) => {
+    const x = xAxis === "age" ? ages?.[season] : i + 1;
+    return x === undefined ? [] : [{ x, season, value }];
+  });
 }
 
-// Fractional x-index where the line first reaches `target`, linearly
-// interpolated between the two seasons that straddle it, plus the season
-// (year) in which it was reached. Undefined if the line never gets there.
+// Spread points over one label per x from `minX`, with nulls in seasons a
+// player didn't play (or before/after their career).
+function alignToLabels<T>(
+  points: Point[],
+  minX: number,
+  labelCount: number,
+  pick: (p: Point) => T,
+): (T | null)[] {
+  const out: (T | null)[] = Array(labelCount).fill(null);
+  for (const p of points) out[p.x - minX] = pick(p);
+  return out;
+}
+
+// Fractional x where the line first reaches `target`, linearly interpolated
+// between the two seasons that straddle it, plus the season it was reached in.
+// Undefined if the line never gets there.
 function findCrossing(
-  entries: Entry[],
+  points: Point[],
   target: number,
-): { index: number; season: string } | undefined {
-  const i = entries.findIndex((e) => e.value >= target);
+): { x: number; point: Point } | undefined {
+  const i = points.findIndex((p) => p.value >= target);
   if (i === -1) return undefined;
-  if (i === 0) return { index: 0, season: entries[0].season };
-  const prev = entries[i - 1].value;
-  const curr = entries[i].value;
+  if (i === 0) return { x: points[0].x, point: points[0] };
+  const prev = points[i - 1];
+  const curr = points[i];
   return {
-    index: i - 1 + (target - prev) / (curr - prev),
-    season: entries[i].season,
+    x: prev.x + ((target - prev.value) / (curr.value - prev.value)) * (curr.x - prev.x),
+    point: curr,
   };
 }
 
@@ -67,7 +104,7 @@ function findCrossing(
 // where the club player's line crosses it. Drawn before the datasets so the
 // data lines sit on top.
 function milestonePlugin(
-  crossing: { index: number; season: string } | undefined,
+  crossing: { index: number; label: string } | undefined,
 ): Plugin<"line"> {
   return {
     id: "milestoneLines",
@@ -103,7 +140,7 @@ function milestonePlugin(
         ctx.textAlign = nearRight ? "right" : "left";
         ctx.textBaseline = "top";
         ctx.fillText(
-          `${crossing.season}`,
+          crossing.label,
           nearRight ? x - 4 : x + 4,
           chartArea.top + 4,
         );
@@ -114,9 +151,8 @@ function milestonePlugin(
   };
 }
 
-// Cumulative career hits, player vs. a 3,000-hit club member. Careers span
-// different eras, so both lines are indexed by career season (1st, 2nd, ...)
-// rather than calendar year. Styled after
+// Cumulative career hits, player vs. a 3,000-hit club member, by career
+// season or by age (see XAxis). Styled after
 // https://www.chartjs.org/docs/latest/samples/line/styling.html — the player
 // line is "filled", the club comparison line is "unfilled".
 export function CumulativeCharts({
@@ -135,23 +171,31 @@ export function CumulativeCharts({
       : clubPlayers[0]?.key,
   );
   const comparison = clubPlayers.find((c) => c.key === selectedKey);
+  const hasAges = Object.keys(snapshot.age_per_season ?? {}).length > 0;
+  const [xAxis, setXAxis] = useState<XAxis>("season");
 
   const hasPlayerData =
     Object.keys(snapshot.hits_season_cumulative ?? {}).length > 0;
 
   useEffect(() => {
-    const player = toEntries(snapshot.hits_season_cumulative);
-    const club = toEntries(comparison?.hits_season_cumulative);
-    const seasonCount = Math.max(player.length, club.length);
+    const player = toPoints(snapshot.hits_season_cumulative, snapshot.age_per_season, xAxis);
+    const club = toPoints(comparison?.hits_season_cumulative, comparison?.age_per_season, xAxis);
     if (!canvasRef.current || player.length === 0) return;
 
-    const labels = Array.from({ length: seasonCount }, (_, i) => `${i + 1}`);
+    const xs = [...player, ...club].map((p) => p.x);
+    const minX = Math.min(...xs);
+    const labelCount = Math.max(...xs) - minX + 1;
+    const labels = Array.from({ length: labelCount }, (_, i) => `${minX + i}`);
+    const align = <T,>(points: Point[], pick: (p: Point) => T) =>
+      alignToLabels(points, minX, labelCount, pick);
+
+    const crossing = findCrossing(club, MILESTONE);
 
     const datasets = [
       {
-        label: snapshot.player_fullName,
-        data: player.map((e) => e.value),
-        years: player.map((e) => e.season),
+        label: snapshot.full_name,
+        data: align(player, (p) => p.value),
+        years: align(player, (p) => p.season),
         borderColor: PLAYER_LINE_COLOR,
         backgroundColor: PLAYER_FILL_COLOR,
         fill: true,
@@ -162,8 +206,8 @@ export function CumulativeCharts({
         ? [
             {
               label: comparison.full_name,
-              data: club.map((e) => e.value),
-              years: club.map((e) => e.season),
+              data: align(club, (p) => p.value),
+              years: align(club, (p) => p.season),
               borderColor: COMPARISON_LINE_COLOR,
               backgroundColor: COMPARISON_LINE_COLOR,
               fill: false,
@@ -177,11 +221,23 @@ export function CumulativeCharts({
     const chart = new Chart(canvasRef.current, {
       type: "line",
       data: { labels, datasets },
-      plugins: [milestonePlugin(findCrossing(club, MILESTONE))],
+      plugins: [
+        milestonePlugin(
+          crossing && {
+            index: crossing.x - minX,
+            label:
+              xAxis === "age"
+                ? `Age ${crossing.point.x} (${crossing.point.season})`
+                : crossing.point.season,
+          },
+        ),
+      ],
       options: {
         responsive: true,
         maintainAspectRatio: false,
         interaction: { mode: "index", intersect: false },
+        // bridge seasons a player missed rather than breaking the line
+        spanGaps: true,
         plugins: {
           legend: {
             position: "top",
@@ -190,9 +246,9 @@ export function CumulativeCharts({
           },
           tooltip: {
             callbacks: {
-              title: (items) => `Career season ${items[0]?.label ?? ""}`,
+              title: (items) => `${X_AXIS_TITLES[xAxis]} ${items[0]?.label ?? ""}`,
               label: (item) => {
-                const years = (item.dataset as { years?: string[] }).years;
+                const years = (item.dataset as { years?: (string | null)[] }).years;
                 const year = years?.[item.dataIndex];
                 const hits = (item.parsed.y ?? 0).toLocaleString();
                 return `${item.dataset.label}: ${hits}${year ? ` (${year})` : ""}`;
@@ -204,7 +260,7 @@ export function CumulativeCharts({
           x: {
             title: {
               display: true,
-              text: "Career season",
+              text: X_AXIS_TITLES[xAxis],
               color: AXIS_COLOR,
               font: { size: 10, weight: "bold" },
             },
@@ -227,7 +283,7 @@ export function CumulativeCharts({
     });
 
     return () => chart.destroy();
-  }, [snapshot, comparison]);
+  }, [snapshot, comparison, xAxis]);
 
   if (!hasPlayerData) return null;
 
@@ -236,31 +292,41 @@ export function CumulativeCharts({
       <h2 className="mb-3 text-lg font-semibold text-zinc-200">
         Comparison Charts
       </h2>
-      {clubPlayers.length > 0 && (
-        <label className="mb-3 flex items-center gap-3 text-sm text-zinc-200">
-          <span>Compare with 3,000 hit club member</span>
-          <select
-            value={selectedKey}
-            onChange={(e) => setSelectedKey(e.target.value)}
-            className="rounded-md bg-emerald-900 px-3 py-1.5 text-sm text-zinc-200 ring-1 ring-zinc-700 focus:outline-none focus:ring-2 focus:ring-emerald-400"
-          >
-            {clubPlayers.map((c) => (
-              <option key={c.key} value={c.key}>
-                {c.full_name}
-              </option>
-            ))}
-          </select>
-        </label>
-      )}
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+        {clubPlayers.length > 0 && (
+          <label className="flex items-center gap-3 text-sm text-zinc-200">
+            <span>Compare with 3,000 hit club member</span>
+            <select
+              value={selectedKey}
+              onChange={(e) => setSelectedKey(e.target.value)}
+              className="rounded-md bg-emerald-900 px-3 py-1.5 text-sm text-zinc-200 ring-1 ring-zinc-700 focus:outline-none focus:ring-2 focus:ring-emerald-400"
+            >
+              {clubPlayers.map((c) => (
+                <option key={c.key} value={c.key}>
+                  {c.full_name}
+                </option>
+              ))}
+            </select>
+          </label>
+        )}
+        {hasAges && (
+          <SegmentedControl
+            label="Line up careers"
+            options={X_AXIS_OPTIONS}
+            value={xAxis}
+            onChange={setXAxis}
+          />
+        )}
+      </div>
       <div className="rounded-xl bg-emerald-900 p-5 shadow-sm ring-1 ring-zinc-800">
         <p className="mb-2 text-sm font-medium uppercase tracking-wide text-zinc-200">
-          Cumulative hits by season
+          Cumulative hits by {xAxis === "age" ? "age" : "career season"}
         </p>
         <div className="relative" style={{ height: CHART_HEIGHT }}>
           <canvas
             ref={canvasRef}
             role="img"
-            aria-label={`Cumulative career hits by season for ${snapshot.player_fullName}${
+            aria-label={`Cumulative career hits by ${X_AXIS_TITLES[xAxis].toLowerCase()} for ${snapshot.full_name}${
               comparison ? ` compared with ${comparison.full_name}` : ""
             }`}
           />

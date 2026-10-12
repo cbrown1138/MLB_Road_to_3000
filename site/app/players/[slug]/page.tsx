@@ -7,9 +7,7 @@ import {
   getLeagueHitsMeanBySeason,
   getLeagueHitsMaxBySeason,
   getAllClubCumulative,
-  slugify,
 } from "@/lib/players";
-import { PlayerHeader } from "@/components/PlayerHeader";
 import { HeroCounter } from "@/components/HeroCounter";
 import { PaceGrid } from "@/components/PaceGrid";
 import { HotColdBand } from "@/components/HotColdBand";
@@ -21,7 +19,7 @@ const DEFAULT_CLUB_COMPARISON = "110987"; // Craig Biggio
 
 export function generateStaticParams() {
   return getAllPlayers().map((player) => ({
-    slug: slugify(player.player_lastName),
+    slug: player.slug,
   }));
 }
 

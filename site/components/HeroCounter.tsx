@@ -1,5 +1,5 @@
 import type { PlayerSnapshot } from "@/lib/players";
-import { slugify } from "@/lib/players";
+import { playerHeroPhoto } from "@/lib/players";
 import Image from "next/image";
 
 export function HeroCounter({
@@ -17,8 +17,8 @@ export function HeroCounter({
   return (
     <section className="relative aspect-[16/9] min-h-[360px] w-full max-w-5xl overflow-hidden rounded-2xl shadow-sm ring-1 ring-zinc-800">
       <Image
-        src={`/${slugify(snapshot.player_lastName)}2.jpeg`}
-        alt={snapshot.player_fullName}
+        src={playerHeroPhoto(snapshot)}
+        alt={snapshot.full_name}
         fill
         sizes="(max-width: 768px) 100vw, 768px"
         className="object-cover"
@@ -27,13 +27,13 @@ export function HeroCounter({
 
       <div className="absolute inset-x-0 bottom-0 p-8">
         <p className="text-xl font-semibold text-zinc-100">
-          {snapshot.player_fullName}
+          {snapshot.full_name}
         </p>
         <p className="text-sm text-zinc-200">
-          {snapshot.player_Position} &ndash; {snapshot.season_current_team}
+          {snapshot.position} &ndash; {snapshot.current_team}
         </p>
         <p className="text-sm text-zinc-200">
-          MLB debut {new Date(snapshot.career_mlb_debut).getFullYear()} &ndash; Age {snapshot.player_age}
+          MLB debut {new Date(snapshot.debut_date).getFullYear()} &ndash; Age {snapshot.age}
         </p>
         <p className="mt-2 text-xl font-bold tabular-nums tracking-tight text-red-400">
           {snapshot.remaining_hits.toLocaleString()} HITS REMAINING

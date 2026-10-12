@@ -15,7 +15,7 @@ export default function Home() {
         <br/>
         <p className="max-w-2xl text-zinc-200 text-center">
           Only 33 batters in Major League Baseball have achieved 3,000 career hits. 
-          A unique combination of skill, consistency, and longevity makes this one of sports' toughest milestones. 
+          A unique combination of skill, consistency, and longevity makes this one of sports&apos; toughest milestones. 
         </p>
         <p className="max-w-2xl text-zinc-200 text-center">
           Follow the few who have a chance to reach this mark in the upcoming seasons. 
@@ -25,7 +25,7 @@ export default function Home() {
 
       <section className="grid w-full max-w-4xl grid-cols-[repeat(auto-fill,200px)] justify-center gap-8">
         {players.map((player) => (
-          <PlayerCard key={player.player_lastName} snapshot={player} />
+          <PlayerCard key={player.last_name} snapshot={player} />
         ))}
       </section>
     </div>

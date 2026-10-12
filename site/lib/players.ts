@@ -30,62 +30,76 @@ function readGroup<T>(group: PlayerGroup): T[] {
   });
 }
 
+// Counting stats over one span of games, all prefixed with the span name,
+// e.g. StatLine<"season"> = { season_hits, season_games, ..., season_AB_pace }.
+// *_pace fields are hits per game / per PA / per AB.
+type StatLine<P extends string> = {
+  [K in `${P}_${"hits" | "games" | "PA" | "AB" | "AVG" | "games_pace" | "PA_pace" | "AB_pace"}`]: number;
+};
+
+// A 30-game window with the dates it spans (YYYY-MM-DD).
+type StreakLine<P extends string> = StatLine<P> & {
+  [K in `${P}_${"start_date" | "end_date"}`]: string;
+};
+
 export type PlayerSnapshot = {
   today: string;
   season: number;
 
-  player_lastName: string;
-  player_fullName: string;
-  player_age: number;
-  player_birthDate: string;
-  player_birthCity: string;
-  player_birthCountry: string;
-  player_Position: string;
+  player_id: number;
+  full_name: string;
+  first_name: string;
+  last_name: string;
+  birth_date: string;
+  birth_city: string;
+  birth_country: string;
+  age: number;
+  position: string;
+  debut_date: string;
+  debut_age: number;
+  current_team: string;
 
   remaining_hits: number;
 
-  career_mlb_debut: string;
-  career_gamesPlayed: number;
-  career_atBats: number;
-  career_hits: number;
-  career_avg: string;
-  career_pace: number;
-  career_pace_remaining: number;
+  // URL segment for /players/[slug]; added by getAllPlayers, not in the JSON.
+  slug: string;
 
-  season_current_team: string;
-  season_hits: number;
-  season_games_played: number;
-  season_pace: number;
-  season_pace_remaining: number;
-
-  games30_hits: number;
-  games30_pace: number;
-  games30_pace_remaining: number;
-
-  games15_hits: number;
-  games15_pace: number;
-
-  games_30_hits_max: number;
-  games_30_hits_max_date_end: string;
-  games_30_hits_max_date_start: string;
-  games_30_hits_max_pace: number;
-
-  games_30_hits_min: number;
-  games_30_hits_min_date_end: string;
-  games_30_hits_min_date_start: string;
-  games_30_hits_min_pace: number;
-
-  // Keyed by season (year as string); produced by fetch/player_active.py.
+  // Keyed by season (year as string).
   games_per_season?: Record<string, number>;
   hits_per_season?: Record<string, number>;
+  PA_per_season?: Record<string, number>;
+  AB_per_season?: Record<string, number>;
   hits_season_cumulative?: Record<string, number>;
-};
+  age_per_season?: Record<string, number>;
+} & StatLine<"career">
+  & StatLine<"season">
+  & StatLine<"last30games">
+  & StatLine<"last15games">
+  & StatLine<"last120PA">
+  & StreakLine<"best30games">
+  & StreakLine<"worst30games">;
 
-export function slugify(lastName: string): string {
-  return lastName.toLowerCase();
+// "José De La Cruz" -> "jose-de-la-cruz"
+export function slugify(name: string): string {
+  return name
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
 }
 
-// MLB player_birthCountry values -> ISO 3166-1 alpha-2 codes, for flag emoji.
+// Player photos in public/images/players/, named by MLBAM id:
+// <id>.jpeg (portrait, home-page card) and <id>-hero.jpeg (wide, player page).
+export function playerPhoto(player: Pick<PlayerSnapshot, "player_id">): string {
+  return `/images/players/${player.player_id}.jpeg`;
+}
+
+export function playerHeroPhoto(player: Pick<PlayerSnapshot, "player_id">): string {
+  return `/images/players/${player.player_id}-hero.jpeg`;
+}
+
+// MLB birth_country values -> ISO 3166-1 alpha-2 codes, for flag emoji.
 const BIRTH_COUNTRY_CODES: Record<string, string> = {
   USA: "US",
   "United States": "US",
@@ -119,13 +133,32 @@ export function countryFlag(country: string): string {
   return [...code].map((c) => String.fromCodePoint(127397 + c.charCodeAt(0))).join("");
 }
 
+// Batting average in the usual ".300" form.
+export function formatAvg(avg: number): string {
+  return avg.toFixed(3).replace(/^0/, "");
+}
+
+// Slugs are the last name ("/players/altuve") unless another tracked player
+// shares it, in which case each of them gets the full name instead.
 export function getAllPlayers(): PlayerSnapshot[] {
-  return readGroup<PlayerSnapshot>("tracked")
-    .sort((a, b) => a.player_lastName.localeCompare(b.player_lastName));
+  const players = readGroup<Omit<PlayerSnapshot, "slug">>("tracked");
+  const lastNameCounts = new Map<string, number>();
+  for (const p of players) {
+    const key = slugify(p.last_name);
+    lastNameCounts.set(key, (lastNameCounts.get(key) ?? 0) + 1);
+  }
+  return players
+    .map((p) => ({
+      ...p,
+      slug: slugify(
+        lastNameCounts.get(slugify(p.last_name))! > 1 ? p.full_name : p.last_name,
+      ),
+    }))
+    .sort((a, b) => a.last_name.localeCompare(b.last_name));
 }
 
 export function getPlayerBySlug(slug: string): PlayerSnapshot | undefined {
-  return getAllPlayers().find((p) => slugify(p.player_lastName) === slug);
+  return getAllPlayers().find((p) => p.slug === slug);
 }
 
 export function getMilestone(): number {
@@ -175,6 +208,7 @@ export type ClubCumulative = {
   full_name: string;
   last_name: string;
   hits_season_cumulative: Record<string, number>;
+  age_per_season: Record<string, number>;
 };
 
 type RetiredPlayerFile = {
@@ -182,6 +216,7 @@ type RetiredPlayerFile = {
   full_name: string;
   last_name: string;
   hits_season_cumulative: Record<string, number>;
+  age_per_season: Record<string, number>;
 };
 
 // Career cumulative hits by season for every club member, sorted by last name.
@@ -193,6 +228,7 @@ export function getAllClubCumulative(): ClubCumulative[] {
         full_name: p.full_name,
         last_name: p.last_name,
         hits_season_cumulative: p.hits_season_cumulative,
+        age_per_season: p.age_per_season,
       }))
       .sort((a, b) => a.last_name.localeCompare(b.last_name));
   } catch {
